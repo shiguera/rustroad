@@ -3,6 +3,7 @@
 #![allow(dead_code)]
 
 mod geom;
+mod road;
 
 #[cfg(test)]
 mod tests {
