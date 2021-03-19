@@ -1,4 +1,6 @@
 use std::f64::consts::PI;
+use float_cmp::approx_eq;
+
 // 2 D vector
 pub struct Vector {
    pub x: f64,
@@ -23,16 +25,16 @@ impl Vector {
       //
       // TODO: Meke comparisons with abs(minvalue), not with ==
       let result:f64;
-      if self.x==0.0 && self.y==0.0 {
+      if approx_eq!(f64, self.x, 0.0, ulps=2) && approx_eq!(f64, self.y, 0.0, ulps=2) {
          result = 0.0_f64;         
       } else {
-         if self.x == 0.0 {
+         if approx_eq!(f64, self.x, 0.0, ulps=2) {
             if self.y > 0.0 {
                result=PI/2.0;
             } else {
                result = 3.0*PI/2.0;
             } 
-         } else if self.y == 0.0 {
+         } else if approx_eq!(f64, self.y, 0.0, ulps=2) {
             if self.x < 0.0 {
                result = PI;
             } else {
@@ -104,9 +106,12 @@ mod tests {
       let v = Vector::new(-1.0, 1.0);
       assert_eq!(true, v.bearing() == PI/2.0 + PI/4.0);
       let v = Vector::new(-1.0, -1.0);
-      println!("{} {}", v.bearing(), PI - PI/4.0);
       assert_eq!(true, v.bearing() == PI - PI/4.0);
- 
+      // This test fails caused for the problem with ==
+      let v = Vector::new(0.15*6.0+0.10, 1.0);
+      println!("{} {}", v.bearing(), PI/4.0);
+      assert_eq!(true, approx_eq!(f64, v.bearing(), PI/4.0, ulps=2));
+      
    }
    #[test]
    fn test_1() {
