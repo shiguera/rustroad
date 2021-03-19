@@ -20,39 +20,40 @@ impl Vector {
       // Angle with X axis in radians
       // East==Positive X axis is the origin of angles
       // Counterclockwise is the direction 
-      let mut result:f64 = 0.0;
+      //
+      // TODO: Meke comparisons with abs(minvalue), not with ==
+      let result:f64;
       if self.x==0.0 && self.y==0.0 {
          result = 0.0_f64;         
-      }
-      if self.x == 0.0 {
-         if self.y > 0.0 {
-            result=PI/2.0;
+      } else {
+         if self.x == 0.0 {
+            if self.y > 0.0 {
+               result=PI/2.0;
+            } else {
+               result = 3.0*PI/2.0;
+            } 
+         } else if self.y == 0.0 {
+            if self.x < 0.0 {
+               result = PI;
+            } else {
+               result = 0.0;
+            }
          } else {
-            result = 3.0*PI/2.0;
-         } 
-      } 
-      if self.y == 0.0 {
-         if self.x < 0.0 {
-            result = PI;
-         } else {
-            result = 0.0;
-         }
-      } 
-      let tangent = self.y/self.x;
-      let angle = tangent.atan().abs();
-      
-      if self.x < 0.0 {
-         if self.y < 0.0 {
-            result = angle + PI;
-         } else {
-            result = PI - angle;
-         }
-      }
-      if self.x>0.0 { 
-         if self.y<0.0 {
-            result = 2.0*PI-angle;
-         } else {
-            result = angle;
+            let tangent = self.y/self.x;
+            let angle = tangent.atan();
+            if angle > 0.0 {
+               if self.x > 0.0 {
+                  result = angle;
+               } else {
+                  result = PI + (- angle);
+               }
+            } else {
+               if self.x > 0.0 {
+                  result = 2.0*PI - (-angle);
+               } else {
+                  result = PI - (-angle);
+               }
+            }
          }
       }
       result
@@ -103,8 +104,8 @@ mod tests {
       let v = Vector::new(-1.0, 1.0);
       assert_eq!(true, v.bearing() == PI/2.0 + PI/4.0);
       let v = Vector::new(-1.0, -1.0);
-      println!("{} {}", v.bearing(), PI + PI/4.0);
-      assert_eq!(true, v.bearing() == PI + PI/4.0);
+      println!("{} {}", v.bearing(), PI - PI/4.0);
+      assert_eq!(true, v.bearing() == PI - PI/4.0);
  
    }
    #[test]
