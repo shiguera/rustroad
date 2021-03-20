@@ -1,4 +1,3 @@
-use float_cmp::approx_eq;
 use crate::geom::line::Line;
 
 #[derive(Copy, Clone)]
@@ -24,6 +23,8 @@ impl Point {
 mod tests {
    #[cfg(test)]
    use super::*;
+   #[cfg(test)]
+   use float_cmp::approx_eq;
 
    #[test]
    fn test_new() {
