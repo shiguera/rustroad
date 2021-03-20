@@ -18,6 +18,9 @@ impl Vector {
       let module = self.length();
       Vector::new(self.x/module, self.y/module)
    }
+   pub fn perpendicular_vector(&self) -> Self {
+      Vector::new(-self.y, self.x)
+   }
    pub fn bearing(&self) -> f64 {
       // Angle with X axis in radians
       // East==Positive X axis is the origin of angles
@@ -88,6 +91,27 @@ mod tests {
       assert_eq!(true, v.unit_vector().y - (-0.7071) < 0.0001);      
    }
    #[test]
+   fn test_perpendicular_vector() {
+      let v = Vector::new(0.0, 0.0);
+      let w = v.perpendicular_vector();
+      assert_eq!(true, approx_eq!(f64, w.x, 0.0, ulps=2));
+      assert_eq!(true, approx_eq!(f64, w.y, 0.0, ulps=2));
+      let v = Vector::new(1.0, 0.0);
+      let w = v.perpendicular_vector();
+      assert_eq!(true, approx_eq!(f64, w.x, 0.0, ulps=2));
+      assert_eq!(true, approx_eq!(f64, w.y, 1.0, ulps=2));
+      let v = Vector::new(0.0, 1.0);
+      let w = v.perpendicular_vector();
+      assert_eq!(true, approx_eq!(f64, w.x, -1.0, ulps=2));
+      assert_eq!(true, approx_eq!(f64, w.y, 0.0, ulps=2));
+      let v = Vector::new(1.0, 1.0);
+      let w = v.perpendicular_vector();
+      assert_eq!(true, approx_eq!(f64, w.x, -1.0, ulps=2));
+      assert_eq!(true, approx_eq!(f64, w.y, 1.0, ulps=2));
+
+
+   }
+   #[test]
    fn test_bearing() {
       let v = Vector::new(0.0, 0.0);
       assert_eq!(true, v.bearing() == 0.0);
@@ -107,11 +131,11 @@ mod tests {
       assert_eq!(true, v.bearing() == PI/2.0 + PI/4.0);
       let v = Vector::new(-1.0, -1.0);
       assert_eq!(true, v.bearing() == PI - PI/4.0);
-      // This test fails caused for the problem with ==
+      // The following test fails if not uses approx_eq!(), 
+      // caused for the problem with ==
       let v = Vector::new(0.15*6.0+0.10, 1.0);
       println!("{} {}", v.bearing(), PI/4.0);
       assert_eq!(true, approx_eq!(f64, v.bearing(), PI/4.0, ulps=2));
-      
    }
    #[test]
    fn test_1() {
@@ -121,5 +145,14 @@ mod tests {
       println!("{}", a==b);  // Fails, because they are not exactly equal
       println!("{}", f64::MIN);
       println!("{}", f64::EPSILON);
+      let v = Vector{x:2.0, y:1.0};
+      let w = v.perpendicular_vector().unit_vector();
+      println!("{} {}", w.x, -1.0/5.0_f64.sqrt());
+      println!("{} {}", w.y, 2.0/5.0_f64.sqrt());
+      
+      assert_eq!(true, approx_eq!(f64, w.x, -1.0/5.0_f64.sqrt(), ulps=2));
+      assert_eq!(true, approx_eq!(f64, w.y, 2.0/5.0_f64.sqrt(), ulps=2));
+
+
    }
 }
