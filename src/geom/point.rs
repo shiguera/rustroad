@@ -1,6 +1,6 @@
 use crate::geom::line::Line;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct Point {
    pub x: f64,
    pub y: f64
