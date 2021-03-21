@@ -68,6 +68,9 @@ impl Vector {
 mod tests {
    #[cfg(test)]
    use super::*;
+   #[cfg(test)]
+   use crate::*;
+   
 
    #[test]
    fn test_new() {
@@ -135,7 +138,7 @@ mod tests {
       // caused for the problem with ==
       let v = Vector::new(0.15*6.0+0.10, 1.0);
       println!("{} {}", v.bearing(), PI/4.0);
-      assert_eq!(true, approx_eq!(f64, v.bearing(), PI/4.0, ulps=2));
+      assert_eq!(true, eq(v.bearing(), PI/4.0));
    }
    #[test]
    fn test_1() {
@@ -149,10 +152,7 @@ mod tests {
       let w = v.perpendicular_vector().unit_vector();
       println!("{} {}", w.x, -1.0/5.0_f64.sqrt());
       println!("{} {}", w.y, 2.0/5.0_f64.sqrt());
-      
-      assert_eq!(true, approx_eq!(f64, w.x, -1.0/5.0_f64.sqrt(), ulps=2));
-      assert_eq!(true, approx_eq!(f64, w.y, 2.0/5.0_f64.sqrt(), ulps=2));
-
-
+      assert_eq!(true, eq(w.x, -1.0/5.0_f64.sqrt()));
+      assert_eq!(true, eq(w.y, 2.0/5.0_f64.sqrt()));
    }
 }
