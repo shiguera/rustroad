@@ -1,7 +1,9 @@
 use std::f64::consts::PI;
 use float_cmp::approx_eq;
+use crate::*;
 
 // 2 D vector
+#[derive(Clone, Copy, Debug)]
 pub struct Vector {
    pub x: f64,
    pub y: f64
@@ -11,17 +13,21 @@ impl Vector {
    pub fn new(x: f64, y: f64) -> Self {
       Vector{x,y}
    }
-   pub fn length(&self) -> f64 {
+   pub fn length(self) -> f64 {
       ((self.x*self.x)+(self.y*self.y)).sqrt()
    }
-   pub fn unit_vector(&self) -> Self {
+   pub fn unit_vector(self) -> Self {
+      // Vector with same direction and length 1
       let module = self.length();
+      if eq(module, 0.0) {
+         panic!("Trying unit_vector() of vector with length() zero")
+      }
       Vector::new(self.x/module, self.y/module)
    }
-   pub fn perpendicular_vector(&self) -> Self {
+   pub fn perpendicular_vector(self) -> Self {
       Vector::new(-self.y, self.x)
    }
-   pub fn bearing(&self) -> f64 {
+   pub fn bearing(self) -> f64 {
       // Angle with X axis in radians
       // East==Positive X axis is the origin of angles
       // Counterclockwise is the direction 
@@ -68,10 +74,7 @@ impl Vector {
 mod tests {
    #[cfg(test)]
    use super::*;
-   #[cfg(test)]
-   use crate::*;
    
-
    #[test]
    fn test_new() {
       let v = Vector::new(1.0,-1.0);
@@ -82,16 +85,22 @@ mod tests {
    fn test_length() {
       let v = Vector::new(1.0,-1.0);
       assert_eq!(true, v.length()-2.0_f64.sqrt() < 0.001);
+      assert_eq!(true, eq(v.unit_vector().length(), 1.0));
       let v = Vector::new(0.0,0.0);
-      assert_eq!(true, v.length()-0.0_f64 < 0.001);
-      
+      assert_eq!(true, v.length()-0.0_f64 < 0.001);   
    }
    #[test]
    fn test_unit_vector() {
       let v = Vector::new(1.0,-1.0);
       assert_eq!(true, v.unit_vector().length()-1.0_f64 < 0.001);
       assert_eq!(true, v.unit_vector().x - 0.7071 < 0.0001);
-      assert_eq!(true, v.unit_vector().y - (-0.7071) < 0.0001);      
+      assert_eq!(true, v.unit_vector().y - (-0.7071) < 0.0001); 
+   }
+   #[test]
+   #[should_panic]
+   fn test_unit_vector_with_length_zero() {
+      let v = Vector::new(0.0, 0.0);
+      let _w = v.unit_vector();
    }
    #[test]
    fn test_perpendicular_vector() {
