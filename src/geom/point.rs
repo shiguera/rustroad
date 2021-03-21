@@ -12,7 +12,7 @@ impl Point {
    pub fn dist_to(&self, other: Point) -> f64 {
       ((other.x-self.x).powf(2.0) + (other.y-self.y).powf(2.0)).sqrt()
    }
-   pub fn dist_to_line(&self, line: &Line) -> f64 {
+   pub fn dist_to_line(&self, line: Line) -> f64 {
       let mut d = (line.a*self.x + line.b*self.y + line.c) / (line.a*line.a + line.b*line.b).sqrt();
       d = d.abs();
       d
@@ -45,13 +45,13 @@ mod tests {
    fn test_dist_to_line() {
       let r = Line::new(0.0, 1.0, 0.0);
       let p = Point::new(0.0, 10.0);
-      assert_eq!(true, approx_eq!(f64, p.dist_to_line(&r), 10.0, ulps=2));
+      assert_eq!(true, approx_eq!(f64, p.dist_to_line(r), 10.0, ulps=2));
       let r = Line::new(1.0, 0.0, 3.0);
       let p = Point::new(0.0, 10.0);
-      assert_eq!(true, approx_eq!(f64, p.dist_to_line(&r), 3.0, ulps=2));
+      assert_eq!(true, approx_eq!(f64, p.dist_to_line(r), 3.0, ulps=2));
       let r = Line::new(1.0, -1.0, 0.0);
       let p = Point::new(0.0, 0.0);
-      assert_eq!(true, approx_eq!(f64, p.dist_to_line(&r), 0.0, ulps=2));
+      assert_eq!(true, approx_eq!(f64, p.dist_to_line(r), 0.0, ulps=2));
  
    }
 }

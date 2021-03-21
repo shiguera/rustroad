@@ -2,7 +2,7 @@ use crate::*;
 use crate::geom::vector::Vector;
 use crate::geom::point::Point;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct Line {
    // Straight ine in the form ax + by + c = 0
    pub a: f64,
@@ -14,6 +14,7 @@ impl Line {
       Line{a,b,c}
    }
    pub fn from_point_vector(p:Point, u:Vector) -> Self {
+      // Line from a Point and a Vector
       let a:f64;
       let b:f64;
       let c: f64;
