@@ -1,4 +1,5 @@
 use crate::geom::line::Line;
+use crate::*;
 
 #[derive(Copy, Clone, Debug)]
 pub struct Point {
@@ -16,6 +17,9 @@ impl Point {
       let mut d = (line.a*self.x + line.b*self.y + line.c) / (line.a*line.a + line.b*line.b).sqrt();
       d = d.abs();
       d
+   }
+   pub fn middle_point(self, other: Point) -> Self {
+      Point::new((self.x + other.x)/2.0, (self.y+other.y)/2.0)
    }
 }
 
@@ -53,5 +57,24 @@ mod tests {
       let p = Point::new(0.0, 0.0);
       assert_eq!(true, approx_eq!(f64, p.dist_to_line(r), 0.0, ulps=2));
  
+   }
+   #[test]
+   fn test_middle_point() {
+      let p1 = Point::new(0.0, 0.0);
+      let other = Point::new(10.0, 0.0);
+      let mp = p1.middle_point(other);
+      assert_eq!(true, eq(mp.x, 5.0));
+      let other = Point::new(10.0, 10.0);
+      let mp = p1.middle_point(other);
+      assert_eq!(true, eq(mp.x, 5.0));
+      assert_eq!(true, eq(mp.y, 5.0));
+      let p1 = Point::new(-1.0, -1.0);
+      let other = Point::new(-2.0, -2.0);
+      let mp = p1.middle_point(other);
+      assert_eq!(true, eq(mp.x, -1.5));
+      assert_eq!(true, eq(mp.y, -1.5));
+      
+      
+
    }
 }
