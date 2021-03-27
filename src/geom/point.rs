@@ -1,5 +1,5 @@
 use crate::geom::line::Line;
-use crate::*;
+//use crate::*;
 
 #[derive(Copy, Clone, Debug)]
 pub struct Point {
@@ -21,6 +21,12 @@ impl Point {
    pub fn middle_point(self, other: Point) -> Self {
       Point::new((self.x + other.x)/2.0, (self.y+other.y)/2.0)
    }
+   pub fn rot_axis(self, theta: f64) -> Self {
+      // Coordinates in new axis rotated an angle theta ccw 
+      let xprim = self.x*theta.cos() + self.y*theta.sin();
+      let yprim = -self.x*theta.sin() + self.y*theta.cos();
+      Point::new(xprim, yprim)
+   }
 }
 
 
@@ -28,7 +34,9 @@ mod tests {
    #[cfg(test)]
    use super::*;
    #[cfg(test)]
-   use float_cmp::approx_eq;
+   use crate::*;
+   #[cfg(test)]
+   use std::f64::consts::*;
 
    #[test]
    fn test_new() {
@@ -73,8 +81,27 @@ mod tests {
       let mp = p1.middle_point(other);
       assert_eq!(true, eq(mp.x, -1.5));
       assert_eq!(true, eq(mp.y, -1.5));
-      
-      
-
    }
+   #[test]
+   fn test_rot_axis() {
+      let p = Point::new(1.0, 0.0);
+      let pprim = p.rot_axis(PI);
+      assert_eq!(true, (pprim.x-(-1.0_f64)).abs()<1e-10);
+      assert_eq!(true, (pprim.y-0.0_f64).abs()<1e-10);
+      let p = Point::new(1.0, 0.0);
+      let pprim = p.rot_axis(PI/2.0);
+      assert_eq!(true, (pprim.x-0.0_f64).abs()<1e-10);
+      assert_eq!(true, (pprim.y-(-1.0_f64)).abs()<1e-10);
+      
+   }
+   #[test]
+   fn test_1() {
+      println!("{}", FRAC_PI_2.cos());
+      println!("{}", eq((PI/2.0).cos(), 0.0));
+      println!("{}", (PI/2.0).sin());
+      let x = 90.0_f64.to_radians();
+      println!("{}", x.cos());
+      
+   }
+
 }
