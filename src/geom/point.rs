@@ -27,6 +27,9 @@ impl Point {
       let yprim = -self.x*theta.sin() + self.y*theta.cos();
       Point::new(xprim, yprim)
    }
+   pub fn traslate_axis(self, incx: f64, incy: f64) -> Self {
+      Point::new(self.x+incx, self.y+incy)
+   }
 }
 
 
@@ -93,6 +96,13 @@ mod tests {
       assert_eq!(true, (pprim.x-0.0_f64).abs()<1e-10);
       assert_eq!(true, (pprim.y-(-1.0_f64)).abs()<1e-10);
       
+   }
+   #[test]
+   fn test_traslate_axis() {
+      let p = Point::new(1.0, 0.0);
+      let pprim = p.traslate_axis(10.0, -10.0);
+      assert_eq!(true, eq(pprim.x, 11.0_f64));
+      assert_eq!(true, eq(pprim.y,-10.0_f64));      
    }
    #[test]
    fn test_1() {
