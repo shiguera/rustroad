@@ -8,4 +8,6 @@ pub trait HSection {
    fn start_radius() -> f64;
    fn end_radius() -> f64;
    fn length() -> f64;
+   fn start_azimuth() -> f64;
+   fn end_azimuth() -> f64;
 }
