@@ -1,8 +1,9 @@
 use crate::*;
 use std::f64::consts::PI;
-use factorial::Factorial;
+//use factorial::Factorial;
 
-const NUMITER:i64 = 10_i64;
+// Número de iteraciones en el desarrollo de las integrales de Fresnel
+const NUMITER:i32 = 6_i32;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Clothoid {
@@ -25,47 +26,63 @@ impl Clothoid {
       if eq(end_radius, 0.0_f64) {
          panic!("Clothoid creation error: end_radius can't be zero");
       }
-      if eq(parameter, 0.0_f64) {
-         panic!("Clothoid creation error: parameter can't be zero");
+      if eq(parameter, 0.0_f64) || parameter < 0_f64 {
+         panic!("Clothoid creation error: parameter can't be zero or negative");
       }
       
       Clothoid{parameter, end_radius}
    }
    pub fn length(self) -> f64 {
+      // length always positive
       self.parameter*self.parameter / self.end_radius.abs()
+   }
+   pub fn azimuth_increment(self) -> f64 {
+      // azimuth_increment is positive in right curves
+      // and negative in left curves
+      self.length() / self.end_radius / 2.0
    }
    pub fn end_azimuth(self) -> f64 {
       let alpha_l = self.azimuth_increment();
-      if self.parameter > 0.0 {
-         if self.end_radius > 0.0 {
-               alpha_l
-         } else {
-               2.0*PI-alpha_l.abs()
-         }
-      }  else {
-            PI+alpha_l
+      if self.end_radius > 0.0 {
+            alpha_l
+      } else {
+            2.0*PI-alpha_l.abs()
       }    
    }  
-   pub fn azimuth_increment(self) -> f64 {
-      self.length() / self.end_radius / 2.0
-   }
    pub fn alpha(&self, s:f64) -> f64 {
-      s*s / 2.0 / self.parameter.powi(2)
+      // alpha is the angle with the x axis of the tanget 
+      // to the clothoid in the generic point 
+      // if end_radius is negative, angle is negative
+      if self.end_radius > 0_f64 {
+         s*s / 2.0 / self.parameter.powi(2)
+      } else {
+         -s*s / 2.0 / self.parameter.powi(2)
+      }
    }
    pub fn x(&self, s:f64) -> f64 {
+      // TODO : check results when end_radius or parameter are negative
       let alpha = self.alpha(s);
-      let mut x = 1.0 - alpha.powi(2)/10.0 + alpha.powi(4)/9.0/24.0-alpha.powi(6)/13.0/720.0;
-      x = x * self.parameter.abs()*(2.0*alpha).sqrt();
+      let mut x =0_f64;
+      for n in 0..NUMITER+1 {
+         x = x + (-1.0_f64.powi(n))*alpha.powi(2*n) / (4*n+1) as f64 / factorial(2*n as u64) as f64;
+      }
+      x = x*s;
       x
    }
    pub fn y(&self, s: f64) -> f64 {
       // Calculate y coordinate for the point 
-      // where the length of curve arc is s
+      // where the length of clothid arc is s
+      // TODO : check results when end_radius or parameter are negative
       let alpha = self.alpha(s);
-      let mut y = alpha/3.0 - alpha.powi(3)/7.0/6.0+alpha.powi(5)/11.0/120.0;
-      y = y * self.parameter.abs()*(2.0*alpha).sqrt();
+      let mut y = 0_f64;
+      for n in 0..NUMITER {
+         y = y + (-1.0_f64.powi(n)) * alpha.powi(2*n+1) / (4*n+3) as f64 / factorial((2*n+1) as u64) as f64;
+      }
+      y=y*s;
+      if self.end_radius < 0_f64 {
+         y = -y;
+      }
       y
-
    }
 }
 
@@ -141,28 +158,43 @@ mod tests {
    }
    #[test]
    fn test_x() {
-      let parameter = 190_f64;
-      //println!("{}", parameter);
+      // Case end_radius > 0 => x must be positive
+      let length = 80.22_f64;
       let end_radius = 450_f64;
-      //println!("{}", end_radius);
+      let parameter = (length*end_radius.abs()).sqrt();
+      println!("{}", parameter);
       let cl = Clothoid::new(parameter, end_radius);
       let len = cl.length();
       println!("{}", len);
       let x = cl.x(len);
-      println!("{}", x);
+      println!("x={}", x);
+      assert_eq!(true, (x-80.283).abs()<0.01);
       
+      // Case end_radius < 0 => x must be positive
+      let length = 80.22_f64;
+      let end_radius = -450_f64;
+      let parameter = (length*end_radius.abs()).sqrt();
+      println!("{}", parameter);
+      let cl = Clothoid::new(parameter, end_radius);
+      let len = cl.length();
+      println!("{}", len);
+      let x = cl.x(len);
+      println!("x={}", x);
+      assert_eq!(true, (x-80.283).abs()<0.01);
+
    }
    #[test]
    fn test_y() {
-      let parameter = 190_f64;
-      //println!("{}", parameter);
+      let length = 80.22_f64;
       let end_radius = 450_f64;
-      //println!("{}", end_radius);
+      let parameter = (length*end_radius.abs()).sqrt();
+      println!("{}", parameter);
       let cl = Clothoid::new(parameter, end_radius);
       let len = cl.length();
       println!("{}", len);
       let y = cl.y(len);
-      println!("{}", y);
-      
+      println!("y={}", y);
+      //assert_eq!(true, (y-80.283).abs()<0.001);
+     
    }
 }
