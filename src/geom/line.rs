@@ -4,7 +4,7 @@ use crate::geom::point::Point;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Line {
-   // Straight ine in the form ax + by + c = 0
+   // Straight line in the form ax + by + c = 0
    pub a: f64,
    pub b: f64,
    pub c: f64
