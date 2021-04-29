@@ -10,6 +10,14 @@ mod road;
 pub fn eq(x:f64, y:f64) -> bool {
    approx_eq!(f64, x, y, ulps=2)
 }
+pub fn eq001(x:f64, y:f64) -> bool {
+   // Checks if two numbers differ in less than 0.001
+   if (x-y).abs() < 0.001 {
+      true
+   } else {
+      false
+   }
+}
 fn factorial(num: u64) -> u64 {
    match num {
        0 => 1,
@@ -29,6 +37,23 @@ mod tests {
       assert_eq!(true, eq(0.15+0.15+0.15+0.15, 0.20+0.20+0.20));
     }
 
+    #[test]
+    fn test_eq001() {
+       let x = 1.0;
+       let y = 1.0001;
+       assert_eq!(true, eq001(x,y));
+       let y = 0.9999;
+       assert_eq!(true, eq001(x,y));
+       let x = -1.0;
+       let y = -1.0001;
+       assert_eq!(true, eq001(x,y));
+       let y = -0.9999;
+       assert_eq!(true, eq001(x,y));
+       let x = 0.000005;
+       let y = -0.000005;
+       assert_eq!(true, eq001(x,y));
+       
+    }
     #[test]
     fn test_factorial() {
        let n = 0;
