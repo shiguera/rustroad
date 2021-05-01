@@ -23,8 +23,13 @@ impl Vector {
       }
       Vector::new(self.x/module, self.y/module)
    }
-   pub fn perpendicular_vector(self) -> Self {
+   pub fn left_normal_vector(&self) -> Self {
+      // Perpendicular vector toward the left side (counterclock-wise)
       Vector::new(-self.y, self.x)
+   }
+   pub fn right_normal_vector(self) -> Self {
+      // Perpendicular vector toward the right side (clock-wise)
+      Vector::new(self.y, -self.x)
    }
    pub fn azimuth(self) -> f64 {
       // Angle with X axis in radians
@@ -102,23 +107,33 @@ mod tests {
       let _w = v.unit_vector();
    }
    #[test]
-   fn test_perpendicular_vector() {
+   fn test_normal_vector() {
+      // Tests left_normal_vector() and right_normal_vector()
       let v = Vector::new(0.0, 0.0);
-      let w = v.perpendicular_vector();
+      let w = v.left_normal_vector();
       assert_eq!(true, approx_eq!(f64, w.x, 0.0, ulps=2));
       assert_eq!(true, approx_eq!(f64, w.y, 0.0, ulps=2));
       let v = Vector::new(1.0, 0.0);
-      let w = v.perpendicular_vector();
+      let w = v.left_normal_vector();
       assert_eq!(true, approx_eq!(f64, w.x, 0.0, ulps=2));
       assert_eq!(true, approx_eq!(f64, w.y, 1.0, ulps=2));
+      let w = v.right_normal_vector();
+      assert_eq!(true, approx_eq!(f64, w.x, 0.0, ulps=2));
+      assert_eq!(true, approx_eq!(f64, w.y, -1.0, ulps=2));
       let v = Vector::new(0.0, 1.0);
-      let w = v.perpendicular_vector();
+      let w = v.left_normal_vector();
       assert_eq!(true, approx_eq!(f64, w.x, -1.0, ulps=2));
       assert_eq!(true, approx_eq!(f64, w.y, 0.0, ulps=2));
+      let w = v.right_normal_vector();
+      assert_eq!(true, approx_eq!(f64, w.x, 1.0, ulps=2));
+      assert_eq!(true, approx_eq!(f64, w.y, 0.0, ulps=2));
       let v = Vector::new(1.0, 1.0);
-      let w = v.perpendicular_vector();
+      let w = v.left_normal_vector();
       assert_eq!(true, eq(w.x, -1.0));
       assert_eq!(true, eq(w.y, 1.0));
+      let w = v.right_normal_vector();
+      assert_eq!(true, eq(w.x, 1.0));
+      assert_eq!(true, eq(w.y, -1.0));
    }
    #[test]
    fn test_azimuth() {
@@ -155,7 +170,7 @@ mod tests {
       println!("{}", f64::MIN);
       println!("{}", f64::EPSILON);
       let v = Vector{x:2.0, y:1.0};
-      let w = v.perpendicular_vector().unit_vector();
+      let w = v.left_normal_vector().unit_vector();
       println!("{} {}", w.x, -1.0/5.0_f64.sqrt());
       println!("{} {}", w.y, 2.0/5.0_f64.sqrt());
       assert_eq!(true, eq(w.x, -1.0/5.0_f64.sqrt()));
