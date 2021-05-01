@@ -12,6 +12,9 @@ impl Vector {
    pub fn new(x: f64, y: f64) -> Self {
       Vector{x,y}
    }
+   pub fn from_azimuth(azimuth: f64) -> Self {
+      Vector::new(azimuth.cos(), azimuth.sin())
+   }
    pub fn length(self) -> f64 {
       ((self.x*self.x)+(self.y*self.y)).sqrt()
    }
@@ -84,6 +87,13 @@ mod tests {
       let v = Vector::new(1.0,-1.0);
       assert_eq!(true, v.x-1.0 < 0.001);
       assert_eq!(true, v.y-(-1.0) < 0.001);
+   }
+   #[test] 
+   fn test_from_azimuth() {
+      let azimuth = PI/8.0;
+      let v = Vector::from_azimuth(azimuth);
+      assert_eq!(true, eq001(0.9239, v.x));
+      assert_eq!(true, eq001(0.3827, v.y));
    }
    #[test]
    fn test_length() {

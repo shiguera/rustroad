@@ -18,12 +18,17 @@ pub fn eq001(x:f64, y:f64) -> bool {
       false
    }
 }
-fn factorial(num: u64) -> u64 {
+pub fn factorial(num: u64) -> u64 {
    match num {
        0 => 1,
        1 => 1,
        _ => factorial(num - 1) * num,
    }
+}
+pub fn normalize(_azimuth: f64) -> f64 {
+   // if azimuth > 2PI -> convert in less than 2PI
+   // if azimuth negative -> convert positive
+   todo!();
 }
 
 #[cfg(test)]
