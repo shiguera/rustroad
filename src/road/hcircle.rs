@@ -1,4 +1,5 @@
 use crate::geom::point::Point;
+use crate::geom::vector::Vector;
 use super::hsection::HSection;
 use std::f64::consts::PI;
 
@@ -15,6 +16,18 @@ impl HCircle {
          panic!("Radius zero or negative length");
       }
       HCircle{start_point, start_azimuth, radius, length}
+   }
+   pub fn center(&self) -> Point {
+      let mut direction = Vector::from_azimuth(self.start_azimuth());
+      if self.radius > 0.0 {
+         direction = direction.left_normal_vector();
+      } else {
+         direction = direction.right_normal_vector();
+      }
+      let distance = self.radius.abs();
+      let x = self.start_x() + distance * direction.azimuth().cos();
+      let y = self.start_y() + distance * direction.azimuth().sin();
+      Point::new(x, y)
    }
 }
 impl HSection for HCircle {
@@ -102,6 +115,22 @@ mod tests {
       let angle = 5.9259;
       let c = HCircle::new(p, angle, 400.0, 300.0);
       assert_eq!(true, eq001(0.3927, c.end_azimuth()));
-      
+   }
+   #[test]
+   fn test_center() {
+      let c = Point::new(0.0, 0.0);
+      let r = 1.0;
+      // positive radius
+      let p = Point::new(0.0, -1.0);
+      let hc = HCircle::new(p, 0.0, r, 3.0);
+      let center = hc.center();
+      assert_eq!(true, eq001(c.x, center.x));
+      assert_eq!(true, eq001(c.y, center.y));
+      // negative radius
+      let p = Point::new(-1.0, 0.0);
+      let hc = HCircle::new(p, PI/2.0, -r, 3.0);
+      let center = hc.center();
+      assert_eq!(true, eq001(c.x, center.x));
+      assert_eq!(true, eq001(c.y, center.y));
    }
 }
