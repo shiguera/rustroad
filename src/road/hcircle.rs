@@ -70,6 +70,9 @@ impl HSection for HCircle {
       }
       s_azimuth
    }
+   fn point_at_s(&self, _s:f64) -> Point {
+      todo!()
+   }
 }
 
 mod tests {

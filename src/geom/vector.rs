@@ -60,10 +60,10 @@ impl Vector {
             let tangent = self.y/self.x;
             let angle = tangent.atan();
             if angle > 0.0 {
-               if self.x > 0.0 {
-                  result = angle;
+               if self.x<0.0 && self.y<0.0 {
+                  result = PI + angle;
                } else {
-                  result = PI + (- angle);
+                  result = angle;
                }
             } else {
                if self.x > 0.0 {
@@ -164,7 +164,7 @@ mod tests {
       let v = Vector::new(-1.0, 1.0);
       assert_eq!(true, v.azimuth() == PI/2.0 + PI/4.0);
       let v = Vector::new(-1.0, -1.0);
-      assert_eq!(true, v.azimuth() == PI - PI/4.0);
+      assert_eq!(true, v.azimuth() == PI + PI/4.0);
       // The following test fails if not uses approx_eq!(), 
       // caused for the problem with ==
       let v = Vector::new(0.15*6.0+0.10, 1.0);

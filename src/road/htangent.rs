@@ -59,6 +59,14 @@ impl HSection for HTangent {
    fn azimuth_at_s(&self, _s:f64) -> f64 {
       self.azimuth
    }
+   fn point_at_s(&self, s:f64) -> Point {
+      if s<0.0 || s > self.length() {
+         panic!("s less than zero or grater than length");
+      }
+      let x = self.start_x() + s*self.azimuth.cos();
+      let y = self.start_y() + s*self.azimuth.sin();
+      Point::new(x, y)
+   }
 }
 
 mod tests {
@@ -66,6 +74,8 @@ mod tests {
    use super::*;
    #[cfg(test)]
    use crate::eq;
+   #[cfg(test)]
+   use crate::eq001;
 
    #[test]
    #[should_panic]
@@ -182,4 +192,51 @@ mod tests {
       assert_eq!(r1.end_point().x, 100.0);
       assert_eq!(true, (r1.end_point().y).abs()<0.001);            
    }
+   #[test]
+   fn test_point_at_s() {
+      let p = Point::new(0.0, 0.0);
+      let v = Vector::new(1.0, 0.0);
+      let r = HTangent::new(p, v.azimuth(), 10.0);
+      let q = r.point_at_s(5.0);
+      assert_eq!(true, eq001(5.0, q.x));
+      assert_eq!(true, eq001(0.0, q.y));
+      //
+      let v = Vector::new(0.0, -1.0);
+      let r = HTangent::new(p, v.azimuth(), 10.0);
+      let q = r.point_at_s(5.0);
+      assert_eq!(true, eq001(0.0, q.x));
+      assert_eq!(true, eq001(-5.0, q.y));
+      //
+      let v = Vector::new(-1.0, -1.0);
+      println!("{}", v.azimuth());
+      let r = HTangent::new(p, v.azimuth(), 10.0);
+      let q = r.point_at_s(5.0);
+      assert_eq!(true, eq001(-5.0*(PI/4.0).cos(), q.x));
+      assert_eq!(true, eq001(-5.0*(PI/4.0).sin(), q.y));      
+      //
+      let v = Vector::new(-1.0, 1.0);
+      println!("{}", v.azimuth());
+      let r = HTangent::new(p, v.azimuth(), 10.0);
+      let q = r.point_at_s(5.0);
+      assert_eq!(true, eq001(-5.0*(PI/4.0).cos(), q.x));
+      assert_eq!(true, eq001(5.0*(PI/4.0).sin(), q.y));      
+
+   }
+   #[test]
+   #[should_panic]
+   fn test_point_at_s_panic_1() {
+      let p = Point::new(0.0, 0.0);
+      let v = Vector::new(1.0, 0.0);
+      let r = HTangent::new(p, v.azimuth(), 10.0);
+      let _q = r.point_at_s(15.0);
+   }
+   #[test]
+   #[should_panic]
+   fn test_point_at_s_panic_2() {
+      let p = Point::new(0.0, 0.0);
+      let v = Vector::new(1.0, 0.0);
+      let r = HTangent::new(p, v.azimuth(), 10.0);
+      let _q = r.point_at_s(-5.0);
+   }
+
 }
