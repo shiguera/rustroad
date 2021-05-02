@@ -15,7 +15,11 @@ impl HCircle {
       if radius == 0.0_f64 || length < 0.0_f64 {
          panic!("Radius zero or negative length");
       }
-      HCircle{start_point, start_azimuth, radius, length}
+      let mut angle = start_azimuth;
+      if angle < 0.0 {
+         angle = 2.0*PI + angle;
+      }
+      HCircle{start_point, start_azimuth: angle, radius, length}
    }
    pub fn center(&self) -> Point {
       let mut direction = Vector::from_azimuth(self.start_azimuth());
@@ -50,15 +54,21 @@ impl HSection for HCircle {
       self.start_azimuth
    }
    fn end_azimuth(&self) -> f64 {
-      let angle = self.length() / self.radius;
-      let mut end_azimuth = self.start_azimuth + angle;
-      if end_azimuth > 2.0*PI {
-         end_azimuth = end_azimuth - 2.0*PI;
+      self.azimuth_at_s(self.length())
+   }
+   fn azimuth_at_s(&self, s:f64) -> f64 {
+      if s > self.length() {
+         panic!("s is larger than length");
       }
-      if end_azimuth < 0.0 {
-         end_azimuth = 2.0*PI + end_azimuth;
+      let angle = s / self.radius;
+      let mut s_azimuth = self.start_azimuth + angle;
+      if s_azimuth > 2.0*PI {
+         s_azimuth = s_azimuth - 2.0*PI;
       }
-      end_azimuth
+      if s_azimuth < 0.0 {
+         s_azimuth = 2.0*PI + s_azimuth;
+      }
+      s_azimuth
    }
 }
 
@@ -115,6 +125,37 @@ mod tests {
       let angle = 5.9259;
       let c = HCircle::new(p, angle, 400.0, 300.0);
       assert_eq!(true, eq001(0.3927, c.end_azimuth()));
+   }
+   #[test]
+   #[should_panic]
+   fn test_azimuth_at_s_panic() {
+      let p = Point::new(400.0, 0.0);
+      let angle = PI/2.0;
+      // positive radius
+      let c = HCircle::new(p, angle, 400.0, 628.3185);
+      let _az = c.azimuth_at_s(1000.0);
+   }
+   #[test]
+   fn test_azimuth_at_s() {
+      let p = Point::new(400.0, 0.0);
+      let angle = PI/2.0;
+      // positive radius
+      let c = HCircle::new(p, angle, 400.0, 628.3185);
+      assert_eq!(true, eq001(2.3562, c.azimuth_at_s(314.1593)));
+      // negative radius
+      let angle = -PI/2.0;
+      let c = HCircle::new(p, angle, -400.0, 628.3185);
+      assert_eq!(true, eq001(3.9270, c.azimuth_at_s(314.1593)));
+      // End azimuth negative
+      let p = Point::new(282.8427, 282.8427);
+      let angle = -PI/4.0;
+      let c = HCircle::new(p, angle, -400.0, 942.4778);
+      assert_eq!(true, eq001(3.9270, c.azimuth_at_s(628.3185)));
+      // End azimuth greater then 2PI
+      let p = Point::new(0.0, -400.0);
+      let angle = 0.0;
+      let c = HCircle::new(p, angle, 400.0, 1256.6371);
+      assert_eq!(true, eq001(2.3562, c.azimuth_at_s(942.4778)));
    }
    #[test]
    fn test_center() {

@@ -56,6 +56,9 @@ impl HSection for HTangent {
    fn end_azimuth(&self) -> f64 {
       self.azimuth
    }
+   fn azimuth_at_s(&self, _s:f64) -> f64 {
+      self.azimuth
+   }
 }
 
 mod tests {

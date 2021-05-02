@@ -22,4 +22,5 @@ pub trait HSection {
    fn length(&self) -> f64;
    fn start_azimuth(&self) -> f64;
    fn end_azimuth(&self) -> f64;
+   fn azimuth_at_s(&self, s:f64) -> f64;
 }
