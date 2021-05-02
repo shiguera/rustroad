@@ -37,9 +37,7 @@ impl HSection for HTangent {
       self.start_point
    }
    fn end_point(&self) -> Point {
-      let end_x = self.start_x() + self.length*self.azimuth.cos();
-      let end_y = self.start_y() + self.length*self.azimuth.sin();
-      Point::new(end_x, end_y)
+      self.point_at_s(self.length())
    }
    fn start_radius(&self) -> f64 {
       0.0_f64
@@ -220,7 +218,6 @@ mod tests {
       let q = r.point_at_s(5.0);
       assert_eq!(true, eq001(-5.0*(PI/4.0).cos(), q.x));
       assert_eq!(true, eq001(5.0*(PI/4.0).sin(), q.y));      
-
    }
    #[test]
    #[should_panic]
