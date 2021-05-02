@@ -150,40 +150,49 @@ mod tests {
    }
    #[test]
    fn test_end_point() {
+      // azimuth zero
       let p1 = Point::new(0.0, 0.0);
       let angle = 0.0;
       let length = 100.0;
       let r1 = HTangent::new(p1, angle, length);
       assert_eq!(r1.end_point().x, 100.0);
       assert_eq!(r1.end_point().y, 0.0);
+      // Q1
       let angle = 30.0*PI/180.0;
       let r1 = HTangent::new(p1, angle, length);
       assert_eq!(r1.end_point().x, 100.0*angle.cos());
       assert_eq!(true, (r1.end_point().y - 50.0).abs()<0.001);
+      // Q2
       let angle = 120.0*PI/180.0;
       let r1 = HTangent::new(p1, angle, length);
       assert_eq!(true, (r1.end_point().x+50.0).abs()<0.001);
       assert_eq!(true, (r1.end_point().y - 100.0*angle.sin()).abs()<0.001);
+      // Q3
       let angle = 210.0*PI/180.0;
       let r1 = HTangent::new(p1, angle, length);
       assert_eq!(true, (r1.end_point().x-100.0*angle.cos()).abs()<0.001);
       assert_eq!(true, (r1.end_point().y + 50.0).abs()<0.001);
+      // Q4
       let angle = 300.0*PI/180.0;
       let r1 = HTangent::new(p1, angle, length);
       assert_eq!(true, (r1.end_point().x - 50.0).abs()<0.001);
       assert_eq!(true, (r1.end_point().y-100.0*angle.sin()).abs()<0.001);      
+      // Aziuth PI/2
       let angle = PI/2.0;
       let r1 = HTangent::new(p1, angle, length);
       assert_eq!(true, (r1.end_point().x).abs()< 0.001);
       assert_eq!(true, (r1.end_point().y - 100.0).abs()<0.001);      
+      // Azimuth PI
       let angle = PI;
       let r1 = HTangent::new(p1, angle, length);
       assert_eq!(true, (r1.end_point().x+100.0).abs()<0.001);
       assert_eq!(true, (r1.end_point().y).abs()<0.001);      
+      // Azimuth 3PI/2
       let angle = 3.0*PI/2.0;
       let r1 = HTangent::new(p1, angle, length);
       assert_eq!(true, (r1.end_point().x).abs()<0.001);
       assert_eq!(true, (r1.end_point().y+100.0).abs()<0.001);
+      // Azimuth 2PI
       let angle = 2.0*PI;
       let r1 = HTangent::new(p1, angle, length);
       println!("az={}", r1.azimuth); // Check that 2PI changes to 0.0
