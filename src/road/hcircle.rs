@@ -39,7 +39,7 @@ impl HSection for HCircle {
       self.start_point
    }
    fn end_point(&self) -> Point {
-      todo!();
+      self.point_at_s(self.length())
    }
    fn start_radius(&self) -> f64 {
       self.radius
@@ -70,8 +70,20 @@ impl HSection for HCircle {
       }
       s_azimuth
    }
-   fn point_at_s(&self, _s:f64) -> Point {
-      todo!()
+   fn point_at_s(&self, s:f64) -> Point {
+      // Azimuth at point s
+      let az = self.azimuth_at_s(s);
+      // v = vector in the direction from Center to point at s
+      let mut v = Vector::from_azimuth(az);
+      if self.radius > 0.0 {
+         v = v.right_normal_vector();
+      } else {
+         v = v.left_normal_vector();
+      }
+      let direction = v.azimuth();
+      let x = self.center().x + self.radius.abs()*direction.cos();
+      let y = self.center().y + self.radius.abs()*direction.sin();
+      Point::new(x, y)      
    }
 }
 
@@ -177,4 +189,92 @@ mod tests {
       assert_eq!(true, eq001(c.x, center.x));
       assert_eq!(true, eq001(c.y, center.y));
    }
+   #[test]
+   fn test_point_at_s() {
+      // Q1, R>0
+      let sp = Point::new(400.0, 0.0);
+      let sa = PI/2.0;
+      let r = 400.0;
+      let l = 628.3185;
+      let circle = HCircle::new(sp, sa, r, l);
+      let p45 = Point::new(282.8427, 282.8427);
+      let ps = circle.point_at_s(628.3185/2.0);
+      assert_eq!(true, eq001(p45.x, ps.x));
+      assert_eq!(true, eq001(p45.y, ps.y));
+      // Q1, R<0
+      let sp = Point::new(0.0, 400.0);
+      let sa = 0.0;
+      let r = -400.0;
+      let l = 628.3185;
+      let circle = HCircle::new(sp, sa, r, l);
+      let p45 = Point::new(282.8427, 282.8427);
+      let ps = circle.point_at_s(628.3185/2.0);
+      assert_eq!(true, eq001(p45.x, ps.x));
+      assert_eq!(true, eq001(p45.y, ps.y));
+      // Q1, R>0
+      let sp = Point::new(0.0, 400.0);
+      let sa = 0.0;
+      let r = 400.0;
+      let l = 628.3185;
+      let circle = HCircle::new(sp, sa, r, l);
+      let p45 = Point::new(282.8427, 517.1573);
+      let ps = circle.point_at_s(628.3185/2.0);
+      assert_eq!(true, eq001(p45.x, ps.x));
+      assert_eq!(true, eq001(p45.y, ps.y));
+      // Q3, R<0
+      let sp = Point::new(-400.0, 0.0);
+      let sa = PI / 2.0;
+      let r = -400.0;
+      let l = 628.3185;
+      let circle = HCircle::new(sp, sa, r, l);
+      let p45 = Point::new(-282.8427, 282.8427);
+      let ps = circle.point_at_s(628.3185/2.0);
+      assert_eq!(true, eq001(p45.x, ps.x));
+      assert_eq!(true, eq001(p45.y, ps.y));
+      
+   }
+   #[test]
+   fn test_end_point() {
+      // Q1, R>0
+      let sp = Point::new(400.0, 0.0);
+      let sa = PI/2.0;
+      let r = 400.0;
+      let l = 628.3185;
+      let circle = HCircle::new(sp, sa, r, l);
+      let p90 = Point::new(0.0, 400.0);
+      assert_eq!(true, eq001(p90.x, circle.end_point().x));
+      assert_eq!(true, eq001(p90.y, circle.end_point().y));
+      // Q1, R<0
+      let sp = Point::new(0.0, 400.0);
+      let sa = 0.0;
+      let r = -400.0;
+      let l = 628.3185;
+      let circle = HCircle::new(sp, sa, r, l);
+      let p90 = Point::new(400.0, 0.0);
+      let ps = circle.end_point();
+      println!("{},{}", ps.x, ps.y);
+      assert_eq!(true, eq001(p90.x, ps.x));
+      assert_eq!(true, eq001(p90.y, ps.y));
+      // Q1, R>0
+      let sp = Point::new(0.0, 400.0);
+      let sa = 0.0;
+      let r = 400.0;
+      let l = 628.3185;
+      let circle = HCircle::new(sp, sa, r, l);
+      let p90 = Point::new(400.0, 800.0);
+      let ps = circle.end_point();
+      assert_eq!(true, eq001(p90.x, ps.x));
+      assert_eq!(true, eq001(p90.y, ps.y));
+      // Q3, R<0
+      let sp = Point::new(-400.0, 0.0);
+      let sa = PI / 2.0;
+      let r = -400.0;
+      let l = 628.3185;
+      let circle = HCircle::new(sp, sa, r, l);
+      let p90 = Point::new(0.0, 400.0);
+      let ps = circle.end_point();
+      assert_eq!(true, eq001(p90.x, ps.x));
+      assert_eq!(true, eq001(p90.y, ps.y));      
+   }
+
 }
