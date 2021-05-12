@@ -1,7 +1,8 @@
 use crate::geom::point::Point;
 //use crate::geom::vector::Vector;
+use crate::eq001;
 use super::hsection::HSection;
-//use std::f64::consts::PI;
+use std::f64::consts::PI;
 
 pub struct HClothoid {
    pub start_point: Point,
@@ -14,6 +15,9 @@ pub struct HClothoid {
 impl HClothoid {
    pub fn new(start_point: Point, start_azimuth: f64, start_radius: f64, 
       end_radius: f64, length: f64) -> Self {
+         if eq001(0.0, start_radius) && eq001(0.0, end_radius) {
+            panic!("Clothoid can't have start and end radius equal zero");
+         }
          HClothoid{start_point, start_azimuth, start_radius, end_radius, length}
       }
 }
@@ -38,7 +42,20 @@ impl HSection for HClothoid {
       self.start_azimuth
    }
    fn end_azimuth(&self) -> f64 {
-      todo!();
+      let inc_az: f64;
+      if self.start_radius.abs() > 0.0 {
+         inc_az = self.length() / 2.0 / self.start_radius();
+      } else {
+         inc_az = self.length() / 2.0 / self.end_radius();
+      }
+      let mut end_az = self.start_azimuth() + inc_az;
+      if end_az < 0.0 {
+         end_az = 2.0 * PI  + end_az;
+      } 
+      if end_az > 2.0 * PI {
+         end_az = end_az - 2.0 * PI;
+      }
+      end_az
    }
    fn azimuth_at_s(&self, _s:f64) -> f64 {
       todo!();
@@ -50,15 +67,24 @@ impl HSection for HClothoid {
 mod tests {
    #[cfg(test)]
    use super::*;
-   #[cfg(test)]
-   use crate::eq001;
 
+   #[test]
+   #[should_panic]
+   fn test_new_panic() {
+      let start_point = Point::new(0.0,0.0);
+      let start_azimuth = 0.0;
+      let start_radius = 0.0;
+      let end_radius = 0.0;
+      let length = 80.22;
+      let _cl = HClothoid::new(start_point, start_azimuth, start_radius, 
+         end_radius, length); 
+   }
    #[test]
    fn test_new() {
       let start_point = Point::new(0.0,0.0);
       let start_azimuth = 0.0;
       let start_radius = 0.0;
-      let end_radius = 400.0;
+      let end_radius = 450.0;
       let length = 80.22;
       let cl = HClothoid::new(start_point, start_azimuth, start_radius, 
          end_radius, length); 
@@ -68,6 +94,30 @@ mod tests {
       assert_eq!(true, eq001(start_radius, cl.start_radius));
       assert_eq!(true, eq001(end_radius, cl.end_radius));
       assert_eq!(true, eq001(length, cl.length));
-
+   }
+   #[test]
+   fn test_end_azimuth() {
+      let start_point = Point::new(0.0,0.0);
+      let start_azimuth = 0.0;
+      let start_radius = 0.0;
+      let end_radius = 450.0;
+      let length = 80.22;
+      let cl = HClothoid::new(start_point, start_azimuth, start_radius, 
+         end_radius, length); 
+      assert_eq!(true, eq001(0.08913, cl.end_azimuth()));
+      // end azimuth greater than 2PI
+      let start_azimuth = 2.0*PI - 0.05;
+      let cl = HClothoid::new(start_point, start_azimuth, start_radius, 
+         end_radius, length); 
+      assert_eq!(true, eq001(0.03913, cl.end_azimuth()));
+      // end azimuth less than zero
+      let start_point = Point::new(0.0,0.0);
+      let start_azimuth = 0.0;
+      let start_radius = 0.0;
+      let end_radius = -450.0;
+      let length = 80.22;
+      let cl = HClothoid::new(start_point, start_azimuth, start_radius, 
+         end_radius, length); 
+      assert_eq!(true, eq001(6.194055, cl.end_azimuth()));     
    }
 }
