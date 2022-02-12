@@ -12,7 +12,10 @@ impl Vector {
    pub fn new(x: f64, y: f64) -> Self {
       Vector{x,y}
    }
+   // Build a Vector from an azimuth angle.
+   // Azimuth is measured from east leftward
    pub fn from_azimuth(azimuth: f64) -> Self {
+      todo!("Azimuth must be done from sud");
       Vector::new(azimuth.cos(), azimuth.sin())
    }
    pub fn length(self) -> f64 {

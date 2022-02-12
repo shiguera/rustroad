@@ -18,16 +18,22 @@ impl Point {
       d = d.abs();
       d
    }
-   pub fn middle_point(self, other: Point) -> Self {
+   pub fn middle_point(&self, other: Point) -> Self {
       Point::new((self.x + other.x)/2.0, (self.y+other.y)/2.0)
    }
-   pub fn rotate_axis(self, theta: f64) -> Self {
+   pub fn rotate_axis(&self, theta: f64) -> Self {
       // Coordinates in new axis rotated an angle theta ccw 
       let xprim = self.x*theta.cos() + self.y*theta.sin();
       let yprim = -self.x*theta.sin() + self.y*theta.cos();
       Point::new(xprim, yprim)
    }
-   pub fn traslate_axis(self, incx: f64, incy: f64) -> Self {
+   ///
+   /// New Point whose coordinates are traslated (incx, incy)
+   /// # (Nota: Traslada las coordenadas, no da las coordenadas
+   /// resultantes de una traslación de los ejes)
+   /// 
+   pub fn traslate_axis(&self, incx: f64, incy: f64) -> Self {
+      //   
       Point::new(self.x+incx, self.y+incy)
    }
 }
