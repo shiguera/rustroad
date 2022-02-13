@@ -72,11 +72,15 @@ mod tests {
       assert!(eq001(Azimuth::from(Angle::new(0.0)).value, 90.0));
       assert!(eq001(Azimuth::from(Angle::new(180.0)).value, 270.0));
       assert!(eq001(Azimuth::from(Angle::new(-90.0)).value, 0.0));
+      let x: Angle = Azimuth::new(45.0).into(); 
+      assert!(eq001(x.value, Angle::new(315.0).value));
    }
    #[test]
    fn test_angle_from_azimuth() {
       assert!(eq001(Angle::from(Azimuth::new(0.0)).value, 270.0));
       assert!(eq001(Angle::from(Azimuth::new(180.0)).value, 90.0));
       assert!(eq001(Angle::from(Azimuth::new(-90.0)).value, 180.0));
+      let az: Azimuth = Angle::new(120.0).into(); 
+      assert!(eq001(az.value , Azimuth::new(210.0).value));     
    }
 }
