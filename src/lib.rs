@@ -25,10 +25,9 @@ pub fn factorial(num: u64) -> u64 {
        _ => factorial(num - 1) * num,
    }
 }
-pub fn normalize(_azimuth: f64) -> f64 {
-   // if azimuth > 2PI -> convert in less than 2PI
-   // if azimuth negative -> convert positive
-   todo!();
+/// This function is a wrapper of Angle::normalize()
+pub fn normalize(angle: f64) -> f64 {
+   geom::angles::Angle::normalize(angle)   
 }
 
 #[cfg(test)]

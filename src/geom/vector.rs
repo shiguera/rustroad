@@ -16,7 +16,7 @@ impl Vector {
    // Azimuth is measured from east leftward
    pub fn from_azimuth(azimuth: f64) -> Self {
       todo!("Azimuth must be done from sud");
-      Vector::new(azimuth.cos(), azimuth.sin())
+      //Vector::new(azimuth.cos(), azimuth.sin())
    }
    pub fn length(self) -> f64 {
       ((self.x*self.x)+(self.y*self.y)).sqrt()
