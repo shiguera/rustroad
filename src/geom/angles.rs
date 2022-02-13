@@ -1,13 +1,14 @@
 use crate::eq001;
+use std::convert::{Into, From};
 
 /// Angle is an angle sexagesimal, measured from the East
 /// toward the North (counter-clockwise)
 pub struct Angle {
-   pub angle: f64
+   pub value: f64
 }
 impl Angle {
    pub fn new(angle: f64) -> Self {
-      Angle{angle}
+      Angle{value:angle}
    }
    /// If the angle's absolute value is greater than 360º, 
    /// it is changed by its equivalent between 0 and 360. 
@@ -24,18 +25,27 @@ impl Angle {
       newangle
    }
 }
-
+impl From<Azimuth> for Angle {
+   fn from(azimuth: Azimuth) -> Self {
+      Angle{value:Angle::normalize(270.0 + azimuth.value)}
+   }
+}
 /// Azimuth is an angle in sexagesimal degrees,
 /// between 0 and 360, measured from Sud toward the east
 pub struct Azimuth {
-   pub angle: f64
+   pub value: f64
 }
 
 impl Azimuth {
    /// Creates a new Azimuth instance. The angle passed as
    /// argument is normalized between 0 and 360
    fn new(angle: f64) -> Self {
-      Azimuth{angle:Angle::normalize(angle)}
+      Azimuth{value:Angle::normalize(angle)}
+   }
+}
+impl From<Angle> for Azimuth {
+   fn from(angle: Angle) -> Self {
+      Azimuth{value: Angle::normalize(angle.value + 90.0)}
    }
 }
 
@@ -55,6 +65,18 @@ mod tests {
    }
    #[test]
    fn test_azimuth_new() {
-      assert!(eq001(Azimuth::new(45.0f64).angle, 45.0f64));
+      assert!(eq001(Azimuth::new(45.0f64).value, 45.0f64));
+   }
+   #[test]
+   fn test_azimuth_from_angle() {
+      assert!(eq001(Azimuth::from(Angle::new(0.0)).value, 90.0));
+      assert!(eq001(Azimuth::from(Angle::new(180.0)).value, 270.0));
+      assert!(eq001(Azimuth::from(Angle::new(-90.0)).value, 0.0));
+   }
+   #[test]
+   fn test_angle_from_azimuth() {
+      assert!(eq001(Angle::from(Azimuth::new(0.0)).value, 270.0));
+      assert!(eq001(Angle::from(Azimuth::new(180.0)).value, 90.0));
+      assert!(eq001(Angle::from(Azimuth::new(-90.0)).value, 180.0));
    }
 }
