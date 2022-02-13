@@ -2,9 +2,9 @@ use crate::*;
 use crate::geom::vector::Vector;
 use crate::geom::point::Point;
 
+/// Straight line in the form ax + by + c = 0
 #[derive(Debug, Clone, Copy)]
 pub struct Line {
-   // Straight line in the form ax + by + c = 0
    pub a: f64,
    pub b: f64,
    pub c: f64

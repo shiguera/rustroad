@@ -5,18 +5,18 @@ use std::f64::consts::PI;
 // Número de iteraciones en el desarrollo de las integrales de Fresnel
 const NUMITER:i32 = 6_i32;
 
+/// Generic clothoid starting in the origin (0, 0) 
+/// with tangent horizontal and infinity radius in this point.
+/// It uses zero as radius value for infinity radius
+/// There are 4 possible solutions. If parameter A is positive, the solution is
+/// in the first or fourth quadrant. If parameter A is negative, the solution
+/// is in the second or thirth quadrant
+/// If ending radius is positive, clothoid is counterclockwise (1st or 3th quadrant) 
+/// If ending radius is negative, the clothoid is clockwise (4th or 2nd quadrant)
+/// start_radius is always zero (infinity)
+/// length is obtained from L = abs(A^2/end_radius)
 #[derive(Debug, Clone, Copy)]
 pub struct Clothoid {
-   // Generic clothoid starting in the origin (0, 0) 
-   // with tangent horizontal and infinity radius in this point.
-   // It uses zero as radius value for infinity radius
-   // There are 4 possible solutions. If parameter A is positive, the solution is
-   // in the first or fourth quadrant. If parameter A is negative, the solution
-   // is in the second or thirth quadrant
-   // If ending radius is positive, clothoid is counterclockwise (1st or 3th quadrant) 
-   // If ending radius is negative, the clothoid is clockwise (4th or 2nd quadrant)
-   // start_radius is always zero (infinity)
-   // length is obtained from L = abs(A^2/end_radius)
    pub parameter: f64, 
    pub end_radius: f64 // radius>0 => counterclockwise
 }
@@ -49,10 +49,10 @@ impl Clothoid {
             2.0*PI-alpha_l.abs()
       }    
    }  
+   /// alpha is the angle with the x axis of the tanget 
+   /// to the clothoid in the generic point 
+   /// if end_radius is negative, angle is negative
    pub fn alpha(&self, s:f64) -> f64 {
-      // alpha is the angle with the x axis of the tanget 
-      // to the clothoid in the generic point 
-      // if end_radius is negative, angle is negative
       if self.end_radius > 0_f64 {
          s*s / 2.0 / self.parameter.powi(2)
       } else {

@@ -29,20 +29,22 @@ impl Vector {
       }
       Vector::new(self.x/module, self.y/module)
    }
+   ///
+   /// Perpendicular vector toward the left side (counterclock-wise)
    pub fn left_normal_vector(&self) -> Self {
-      // Perpendicular vector toward the left side (counterclock-wise)
       Vector::new(-self.y, self.x)
    }
+   ///
+   /// Perpendicular vector toward the right side (clock-wise)
    pub fn right_normal_vector(self) -> Self {
-      // Perpendicular vector toward the right side (clock-wise)
       Vector::new(self.y, -self.x)
    }
+   /// Angle with X axis in radians
+   /// East==Positive X axis is the origin of angles
+   /// Counterclockwise is the direction 
+   ///
+   /// TODO: Make comparisons with abs(minvalue), not with ==
    pub fn azimuth(self) -> f64 {
-      // Angle with X axis in radians
-      // East==Positive X axis is the origin of angles
-      // Counterclockwise is the direction 
-      //
-      // TODO: Make comparisons with abs(minvalue), not with ==
       let result:f64;
       if eq(self.x, 0.0) && eq(self.y, 0.0) {
          result = 0.0_f64;         
