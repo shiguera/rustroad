@@ -1,5 +1,4 @@
-use crate::eq001;
-use std::convert::{Into, From};
+use std::convert::{From};
 
 /// Angle is an angle sexagesimal, measured from the East
 /// toward the North (counter-clockwise)
@@ -52,6 +51,7 @@ impl From<Angle> for Azimuth {
 mod tests {
    #[cfg(test)]
    use super::*;
+   use crate::eq001;
 
    #[test]
    fn test_angle_normalize() {
