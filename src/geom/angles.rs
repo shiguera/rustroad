@@ -26,11 +26,11 @@ impl Angle {
 }
 impl From<Azimuth> for Angle {
    fn from(azimuth: Azimuth) -> Self {
-      Angle{value:Angle::normalize(270.0 + azimuth.value)}
+      Angle{value:Angle::normalize(azimuth.value - 270.0)}
    }
 }
 /// Azimuth is an angle in sexagesimal degrees,
-/// between 0 and 360, measured from Sud toward the east
+/// between 0 and 360, measured from the North toward the east
 pub struct Azimuth {
    pub value: f64
 }
@@ -38,13 +38,13 @@ pub struct Azimuth {
 impl Azimuth {
    /// Creates a new Azimuth instance. The angle passed as
    /// argument is normalized between 0 and 360
-   fn new(angle: f64) -> Self {
-      Azimuth{value:Angle::normalize(angle)}
+   fn new(azimuth: f64) -> Self {
+      Azimuth{value: Angle::normalize(azimuth)}
    }
 }
 impl From<Angle> for Azimuth {
    fn from(angle: Angle) -> Self {
-      Azimuth{value: Angle::normalize(angle.value + 90.0)}
+      Azimuth{value: Angle::normalize(270.0 + angle.value)}
    }
 }
 
@@ -69,18 +69,18 @@ mod tests {
    }
    #[test]
    fn test_azimuth_from_angle() {
-      assert!(eq001(Azimuth::from(Angle::new(0.0)).value, 90.0));
-      assert!(eq001(Azimuth::from(Angle::new(180.0)).value, 270.0));
-      assert!(eq001(Azimuth::from(Angle::new(-90.0)).value, 0.0));
+      assert!(eq001(Azimuth::from(Angle::new(0.0)).value, 270.0));
+      assert!(eq001(Azimuth::from(Angle::new(180.0)).value, 90.0));
+      assert!(eq001(Azimuth::from(Angle::new(-90.0)).value, 180.0));
       let x: Angle = Azimuth::new(45.0).into(); 
-      assert!(eq001(x.value, Angle::new(315.0).value));
+      assert!(eq001(x.value, Angle::new(135.0).value));
    }
    #[test]
    fn test_angle_from_azimuth() {
-      assert!(eq001(Angle::from(Azimuth::new(0.0)).value, 270.0));
-      assert!(eq001(Angle::from(Azimuth::new(180.0)).value, 90.0));
-      assert!(eq001(Angle::from(Azimuth::new(-90.0)).value, 180.0));
+      assert!(eq001(Angle::from(Azimuth::new(0.0)).value, 90.0));
+      assert!(eq001(Angle::from(Azimuth::new(180.0)).value, 270.0));
+      assert!(eq001(Angle::from(Azimuth::new(-90.0)).value, 0.0));
       let az: Azimuth = Angle::new(120.0).into(); 
-      assert!(eq001(az.value , Azimuth::new(210.0).value));     
+      assert!(eq001(az.value , Azimuth::new(30.0).value));     
    }
 }
