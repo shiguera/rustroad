@@ -120,31 +120,31 @@ mod tests {
       let r1 = HTangent::new(p, angle, 100.0);
       let v = r1.vector();
       assert_eq!(true, eq(v.length(), 1.0));
-      assert_eq!(true, eq(v.x, angle.cos()));
-      assert_eq!(true, eq(v.y, angle.sin()));
+      assert_eq!(true, eq(v.vx, angle.cos()));
+      assert_eq!(true, eq(v.vy, angle.sin()));
       // Q2
       let angle = 120.0*PI/180.0;
       let r1 = HTangent::new(p, angle, 100.0);
       let v = r1.vector();
       assert_eq!(true, eq(v.length(), 1.0));
-      assert_eq!(true, (v.x+(30.0*PI/180.0).sin()).abs()<0.001);
-      assert_eq!(true, (v.y-(30.0*PI/180.0).cos()).abs()<0.001);
+      assert_eq!(true, (v.vx+(30.0*PI/180.0).sin()).abs()<0.001);
+      assert_eq!(true, (v.vy-(30.0*PI/180.0).cos()).abs()<0.001);
       //Q3
       let angle = 210.0*PI/180.0;
       let r1 = HTangent::new(p, angle, 100.0);
       let v = r1.vector();
       assert_eq!(true, eq(v.length(), 1.0));
-      assert_eq!(true, (v.x+(30.0*PI/180.0).cos()).abs()<0.001);
-      assert_eq!(true, (v.y+(30.0*PI/180.0).sin()).abs()<0.001);
+      assert_eq!(true, (v.vx+(30.0*PI/180.0).cos()).abs()<0.001);
+      assert_eq!(true, (v.vy+(30.0*PI/180.0).sin()).abs()<0.001);
       // Q4
       let angle = 300.0*PI/180.0;
       let r1 = HTangent::new(p, angle, 100.0);
       let v = r1.vector();
       println!("{} {}", angle.cos(), angle.sin());
-      println!("{} {}", v.x, v.y);
+      println!("{} {}", v.vx, v.vy);
       assert_eq!(true, eq(v.length(), 1.0));
-      assert_eq!(true, (v.x-(30.0*PI/180.0).sin()).abs()<0.001);
-      assert_eq!(true, (v.y+(30.0*PI/180.0).cos()).abs()<0.001);
+      assert_eq!(true, (v.vx-(30.0*PI/180.0).sin()).abs()<0.001);
+      assert_eq!(true, (v.vy+(30.0*PI/180.0).cos()).abs()<0.001);
 
       
    }

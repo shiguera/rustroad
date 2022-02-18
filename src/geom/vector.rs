@@ -4,74 +4,73 @@ use crate::*;
 // 2 D vector
 #[derive(Clone, Copy, Debug)]
 pub struct Vector {
-   pub x: f64,
-   pub y: f64
+   pub vx: f64,
+   pub vy: f64
 }
 
 impl Vector {
-   pub fn new(x: f64, y: f64) -> Self {
-      Vector{x,y}
+   pub fn new(vx: f64, vy: f64) -> Self {
+      Vector{vx,vy}
    }
-   // Build a Vector from an azimuth angle.
-   // Azimuth is measured from east leftward
-   pub fn from_azimuth(azimuth: f64) -> Self {
-      todo!("Azimuth must be done from sud");
-      //Vector::new(azimuth.cos(), azimuth.sin())
+   /// Build an unity Vector from an angle.
+   /// Angle is measured from east leftward
+   pub fn from_angle(angle: f64) -> Self {
+      Vector::new(angle.cos(), angle.sin())
    }
-   pub fn length(self) -> f64 {
-      ((self.x*self.x)+(self.y*self.y)).sqrt()
+   pub fn length(&self) -> f64 {
+      ((self.vx*self.vx)+(self.vy*self.vy)).sqrt()
    }
-   pub fn unit_vector(self) -> Self {
+   pub fn unit_vector(&self) -> Self {
       // Vector with same direction and length 1
-      let module = self.length();
-      if eq(module, 0.0) {
+      let length = self.length();
+      if eq(length, 0.0) {
          panic!("Trying unit_vector() of vector with length() zero")
       }
-      Vector::new(self.x/module, self.y/module)
+      Vector::new(self.vx/length, self.vy/length)
    }
    ///
    /// Perpendicular vector toward the left side (counterclock-wise)
    pub fn left_normal_vector(&self) -> Self {
-      Vector::new(-self.y, self.x)
+      Vector::new(-self.vy, self.vx)
    }
    ///
    /// Perpendicular vector toward the right side (clock-wise)
-   pub fn right_normal_vector(self) -> Self {
-      Vector::new(self.y, -self.x)
+   pub fn right_normal_vector(&self) -> Self {
+      Vector::new(self.vy, -self.vx)
    }
-   /// Angle with X axis in radians
+   /// Angle in radians with X axis 
    /// East==Positive X axis is the origin of angles
    /// Counterclockwise is the direction 
    ///
    /// TODO: Make comparisons with abs(minvalue), not with ==
-   pub fn azimuth(self) -> f64 {
+   pub fn azimuth(&self) -> f64 {
       let result:f64;
-      if eq(self.x, 0.0) && eq(self.y, 0.0) {
+      if eq(self.vx, 0.0) && eq(self.vy, 0.0) {
          result = 0.0_f64;         
       } else {
-         if eq(self.x, 0.0) {
-            if self.y > 0.0 {
+         if eq(self.vx, 0.0) {
+            if self.vy > 0.0 {
                result=PI/2.0;
             } else {
                result = 3.0*PI/2.0;
             } 
-         } else if eq(self.y, 0.0) {
-            if self.x < 0.0 {
+         } else if eq(self.vy, 0.0) {
+            if self.vx < 0.0 {
                result = PI;
             } else {
                result = 0.0;
             }
          } else {
-            let tangent = self.y/self.x;
+            let tangent = self.vy/self.vx;
             let angle = tangent.atan();
             if angle > 0.0 {
-               if self.x<0.0 && self.y<0.0 {
+               if self.vx<0.0 && self.vy<0.0 {
                   result = PI + angle;
                } else {
                   result = angle;
                }
             } else {
-               if self.x > 0.0 {
+               if self.vx > 0.0 {
                   result = 2.0*PI - (-angle);
                } else {
                   result = PI - (-angle);
@@ -90,15 +89,15 @@ mod tests {
    #[test]
    fn test_new() {
       let v = Vector::new(1.0,-1.0);
-      assert_eq!(true, v.x-1.0 < 0.001);
-      assert_eq!(true, v.y-(-1.0) < 0.001);
+      assert_eq!(true, v.vx-1.0 < 0.001);
+      assert_eq!(true, v.vy-(-1.0) < 0.001);
    }
    #[test] 
-   fn test_from_azimuth() {
-      let azimuth = PI/8.0;
-      let v = Vector::from_azimuth(azimuth);
-      assert_eq!(true, eq001(0.9239, v.x));
-      assert_eq!(true, eq001(0.3827, v.y));
+   fn test_from_angle() {
+      let angle = PI/8.0;
+      let v = Vector::from_angle(angle);
+      assert_eq!(true, eq001(0.9239, v.vx));
+      assert_eq!(true, eq001(0.3827, v.vy));
    }
    #[test]
    fn test_length() {
@@ -112,8 +111,8 @@ mod tests {
    fn test_unit_vector() {
       let v = Vector::new(1.0,-1.0);
       assert_eq!(true, v.unit_vector().length()-1.0_f64 < 0.001);
-      assert_eq!(true, v.unit_vector().x - 0.7071 < 0.0001);
-      assert_eq!(true, v.unit_vector().y - (-0.7071) < 0.0001); 
+      assert_eq!(true, v.unit_vector().vx - 0.7071 < 0.0001);
+      assert_eq!(true, v.unit_vector().vy - (-0.7071) < 0.0001); 
    }
    #[test]
    #[should_panic]
@@ -126,29 +125,29 @@ mod tests {
       // Tests left_normal_vector() and right_normal_vector()
       let v = Vector::new(0.0, 0.0);
       let w = v.left_normal_vector();
-      assert_eq!(true, approx_eq!(f64, w.x, 0.0, ulps=2));
-      assert_eq!(true, approx_eq!(f64, w.y, 0.0, ulps=2));
+      assert_eq!(true, approx_eq!(f64, w.vx, 0.0, ulps=2));
+      assert_eq!(true, approx_eq!(f64, w.vy, 0.0, ulps=2));
       let v = Vector::new(1.0, 0.0);
       let w = v.left_normal_vector();
-      assert_eq!(true, approx_eq!(f64, w.x, 0.0, ulps=2));
-      assert_eq!(true, approx_eq!(f64, w.y, 1.0, ulps=2));
+      assert_eq!(true, approx_eq!(f64, w.vx, 0.0, ulps=2));
+      assert_eq!(true, approx_eq!(f64, w.vy, 1.0, ulps=2));
       let w = v.right_normal_vector();
-      assert_eq!(true, approx_eq!(f64, w.x, 0.0, ulps=2));
-      assert_eq!(true, approx_eq!(f64, w.y, -1.0, ulps=2));
+      assert_eq!(true, approx_eq!(f64, w.vx, 0.0, ulps=2));
+      assert_eq!(true, approx_eq!(f64, w.vy, -1.0, ulps=2));
       let v = Vector::new(0.0, 1.0);
       let w = v.left_normal_vector();
-      assert_eq!(true, approx_eq!(f64, w.x, -1.0, ulps=2));
-      assert_eq!(true, approx_eq!(f64, w.y, 0.0, ulps=2));
+      assert_eq!(true, approx_eq!(f64, w.vx, -1.0, ulps=2));
+      assert_eq!(true, approx_eq!(f64, w.vy, 0.0, ulps=2));
       let w = v.right_normal_vector();
-      assert_eq!(true, approx_eq!(f64, w.x, 1.0, ulps=2));
-      assert_eq!(true, approx_eq!(f64, w.y, 0.0, ulps=2));
+      assert_eq!(true, approx_eq!(f64, w.vx, 1.0, ulps=2));
+      assert_eq!(true, approx_eq!(f64, w.vy, 0.0, ulps=2));
       let v = Vector::new(1.0, 1.0);
       let w = v.left_normal_vector();
-      assert_eq!(true, eq(w.x, -1.0));
-      assert_eq!(true, eq(w.y, 1.0));
+      assert_eq!(true, eq(w.vx, -1.0));
+      assert_eq!(true, eq(w.vy, 1.0));
       let w = v.right_normal_vector();
-      assert_eq!(true, eq(w.x, 1.0));
-      assert_eq!(true, eq(w.y, -1.0));
+      assert_eq!(true, eq(w.vx, 1.0));
+      assert_eq!(true, eq(w.vy, -1.0));
    }
    #[test]
    fn test_azimuth() {
@@ -184,11 +183,11 @@ mod tests {
       println!("{}", a==b);  // Fails, because they are not exactly equal
       println!("{}", f64::MIN);
       println!("{}", f64::EPSILON);
-      let v = Vector{x:2.0, y:1.0};
+      let v = Vector{vx:2.0, vy:1.0};
       let w = v.left_normal_vector().unit_vector();
-      println!("{} {}", w.x, -1.0/5.0_f64.sqrt());
-      println!("{} {}", w.y, 2.0/5.0_f64.sqrt());
-      assert_eq!(true, eq(w.x, -1.0/5.0_f64.sqrt()));
-      assert_eq!(true, eq(w.y, 2.0/5.0_f64.sqrt()));
+      println!("{} {}", w.vx, -1.0/5.0_f64.sqrt());
+      println!("{} {}", w.vy, 2.0/5.0_f64.sqrt());
+      assert_eq!(true, eq(w.vx, -1.0/5.0_f64.sqrt()));
+      assert_eq!(true, eq(w.vy, 2.0/5.0_f64.sqrt()));
    }
 }

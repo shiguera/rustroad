@@ -22,7 +22,7 @@ impl HCircle {
       HCircle{start_point, start_azimuth: angle, radius, length}
    }
    pub fn center(&self) -> Point {
-      let mut direction = Vector::from_azimuth(self.start_azimuth());
+      let mut direction = Vector::from_angle(self.start_azimuth());
       if self.radius > 0.0 {
          direction = direction.left_normal_vector();
       } else {
@@ -74,7 +74,7 @@ impl HSection for HCircle {
       // Azimuth at point s
       let az = self.azimuth_at_s(s);
       // v = vector in the direction from Center to point at s
-      let mut v = Vector::from_azimuth(az);
+      let mut v = Vector::from_angle(az);
       if self.radius > 0.0 {
          v = v.right_normal_vector();
       } else {

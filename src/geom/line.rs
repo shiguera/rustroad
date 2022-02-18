@@ -18,12 +18,12 @@ impl Line {
       let a:f64;
       let b:f64;
       let c: f64;
-      if eq(u.x, 0.0) {
+      if eq(u.vx, 0.0) {
          a = 1.0;
          b = 0.0;
          c = -p.x;
       }  else {
-         a = u.y/u.x;
+         a = u.vy/u.vx;
          b = -1.0;
          c = p.y - a*p.x;
       }
