@@ -82,8 +82,8 @@ impl Vector {
    }
 }
 
+#[cfg(test)]
 mod tests {
-   #[cfg(test)]
    use super::*;
    
    #[test]

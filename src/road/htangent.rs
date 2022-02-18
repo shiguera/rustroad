@@ -67,12 +67,10 @@ impl HSection for HTangent {
    }
 }
 
+#[cfg(test)]
 mod tests {
-   #[cfg(test)]
    use super::*;
-   #[cfg(test)]
    use crate::eq;
-   #[cfg(test)]
    use crate::eq001;
 
    #[test]

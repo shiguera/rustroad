@@ -1,5 +1,5 @@
 use std::convert::{From};
-
+   
 /// Angle is an angle sexagesimal, measured from the East
 /// toward the North (counter-clockwise)
 pub struct Angle {
@@ -48,8 +48,8 @@ impl From<Angle> for Azimuth {
    }
 }
 
+#[cfg(test)]
 mod tests {
-   #[cfg(test)]
    use super::*;
    use crate::eq001;
 

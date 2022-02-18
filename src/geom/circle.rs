@@ -1,6 +1,6 @@
 use super::point::Point;
 
-// Circle with positive and not zero radius
+/// Circle with positive and not zero radius
 pub struct Circle {
    pub center: Point,
    pub radius: f64
@@ -15,8 +15,8 @@ impl Circle {
    }
 }
 
+#[cfg(test)]
 mod tests {
-   #[cfg(test)]
    use super::*;
 
    #[test]

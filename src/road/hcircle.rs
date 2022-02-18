@@ -87,8 +87,8 @@ impl HSection for HCircle {
    }
 }
 
+#[cfg(test)]
 mod tests {
-   #[cfg(test)]
    use super::*;
    #[cfg(test)]
    use crate::eq001;   
