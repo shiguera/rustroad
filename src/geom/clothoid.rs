@@ -6,7 +6,7 @@ use std::f64::consts::PI;
 const NUMITER:i32 = 6_i32;
 
 /// Generic clothoid starting in the origin (0, 0) 
-/// with tangent horizontal and infinity radius in this point.
+/// with horizontal tangent and infinity radius at this point.
 /// It uses zero as radius value for infinity radius
 /// There are 4 possible solutions. If parameter A is positive, the solution is
 /// in the first or fourth quadrant. If parameter A is negative, the solution
@@ -28,20 +28,19 @@ impl Clothoid {
       }
       if eq(parameter, 0.0_f64) || parameter < 0_f64 {
          panic!("Clothoid creation error: parameter can't be zero or negative");
-      }
-      
+      }      
       Clothoid{parameter, end_radius}
    }
-   pub fn length(self) -> f64 {
-      // length always positive
+   /// the length is always positive
+   pub fn length(&self) -> f64 {
       self.parameter*self.parameter / self.end_radius.abs()
    }
-   pub fn azimuth_increment(self) -> f64 {
-      // azimuth_increment is positive in right curves
-      // and negative in left curves
+   /// The azimuth_increment is positive in rightward curves
+   /// and negative in leftward curves
+   pub fn azimuth_increment(&self) -> f64 {
       self.length() / self.end_radius / 2.0
    }
-   pub fn end_azimuth(self) -> f64 {
+   pub fn end_azimuth(&self) -> f64 {
       let alpha_l = self.azimuth_increment();
       if self.end_radius > 0.0 {
             alpha_l
@@ -59,6 +58,7 @@ impl Clothoid {
          -s*s / 2.0 / self.parameter.powi(2)
       }
    }
+   /// The x coordinate at a given arc length s
    pub fn x(&self, s:f64) -> f64 {
       let alpha = self.alpha(s).abs();
       let mut x =0_f64;
@@ -68,9 +68,8 @@ impl Clothoid {
       x = x*s;
       x
    }
+   /// The y coordinate at a given arc length s
    pub fn y(&self, s: f64) -> f64 {
-      // Calculate y coordinate for the point 
-      // where the length of clothid arc is s
       let alpha = self.alpha(s).abs();
       let mut y = 0_f64;
       for n in 0..NUMITER {
