@@ -40,6 +40,20 @@ pub fn normalize_radian(rad_value: f64) -> f64 {
    }
    newangle  
 }
+/// If the angle's absolute value is greater than 360, 
+/// it is changed by its equivalent between 0 and 360. 
+/// If the angle is negative, it is changed by its 
+/// equivalent positive angle
+pub fn normalize_360(deg_value: f64) -> f64 {
+   let mut newangle = deg_value;
+   if deg_value.abs() > 360.0 {
+      newangle = deg_value % (360.0);
+   }
+   if newangle < 0.0 {
+      newangle = 360.0 + newangle;
+   }
+   newangle  
+}
 pub fn deg2rad(value360: f64) -> f64 {
    value360*PI/180.0
 }
@@ -111,5 +125,14 @@ mod tests {
        assert_eq001(normalize_radian(deg2rad(-450.0)), deg2rad(270.0));
        assert_eq001(normalize_radian(deg2rad(-765.0)), deg2rad(315.0));               
     }
-   
+    #[test]
+    fn test_normalize_360() {
+       assert_eq001(normalize_360(0f64), 0.0f64);   
+       assert_eq001(normalize_360(45.0), 45.0);
+       assert_eq001(normalize_360(405.50), 45.50);
+       assert_eq001(normalize_360(765.0), 45.0);
+       assert_eq001(normalize_360(-45.0), 315.0);
+       assert_eq001(normalize_360(-450.0), 270.0);
+       assert_eq001(normalize_360(-765.0), 315.0);               
+    }
 }

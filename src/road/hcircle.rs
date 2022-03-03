@@ -91,7 +91,7 @@ impl HSection for HCircle {
 mod tests {
    use super::*;
    #[cfg(test)]
-   use assert_eq001::assert_eq001;   
+   use crate::assert_eq001;   
 
    #[test]
    #[should_panic]
