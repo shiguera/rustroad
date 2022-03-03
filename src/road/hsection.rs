@@ -1,7 +1,15 @@
 use crate::geom::point::Point;
 
-// Sections from horizontal alignment (Tangent, Spiral and CircularCurve)
-// are well defined with these five parameters
+/// Trait for horizontal alignment sections: Tangent, Spiral and CircularCurve\
+///
+/// They are well defined with six parameters: start_x, start_y, start_radius, 
+/// start_azimuth, end_radius and length. Known these, the others (end_x, end_y,
+/// end_azimuth, azimuth_at_s, point_at_s) can be calculated   
+///    
+/// The criteria used is:    
+///    
+/// **Radius:** 0 is for infinitus radius. Positive is for leftward curves\
+/// **Azimuth:** is measured in sexagesimal degrees from the North counterclock-wise
 pub trait HSection {
    fn start_point(&self) -> Point;
    fn start_x(&self) -> f64 {

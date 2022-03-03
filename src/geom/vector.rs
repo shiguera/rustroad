@@ -96,8 +96,8 @@ mod tests {
    fn test_from_angle() {
       let angle = PI/8.0;
       let v = Vector::from_angle(angle);
-      assert_eq!(true, eq001(0.9239, v.vx));
-      assert_eq!(true, eq001(0.3827, v.vy));
+      assert_eq!(true, assert_eq001(0.9239, v.vx));
+      assert_eq!(true, assert_eq001(0.3827, v.vy));
    }
    #[test]
    fn test_length() {
