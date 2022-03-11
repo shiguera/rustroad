@@ -91,7 +91,7 @@ impl HSection for HCircle {
 mod tests {
    use super::*;
    #[cfg(test)]
-   use crate::assert_eq001;   
+   use crate::eq001;   
 
    #[test]
    #[should_panic]
@@ -110,17 +110,17 @@ mod tests {
    fn test_new() {
       // tests new and some functions of trait HSection
       let c = HCircle::new(Point::new(0.0, 0.0), 0.0, 400.0, 300.0);
-      assert_eq!(true, assert_eq001(0.0, c.start_point.x));
-      assert_eq!(true, assert_eq001(0.0, c.start_x()));
-      assert_eq!(true, assert_eq001(0.0, c.start_point.y));
-      assert_eq!(true, assert_eq001(0.0, c.start_y()));
-      assert_eq!(true, assert_eq001(0.0, c.start_azimuth));
-      assert_eq!(true, assert_eq001(0.0, c.start_azimuth()));
-      assert_eq!(true, assert_eq001(400.0, c.radius));
-      assert_eq!(true, assert_eq001(400.0, c.start_radius()));
-      assert_eq!(true, assert_eq001(400.0, c.end_radius()));      
-      assert_eq!(true, assert_eq001(300.0, c.length));
-      assert_eq!(true, assert_eq001(300.0, c.length()));
+      assert_eq!(true, eq001(0.0, c.start_point.x));
+      assert_eq!(true, eq001(0.0, c.start_x()));
+      assert_eq!(true, eq001(0.0, c.start_point.y));
+      assert_eq!(true, eq001(0.0, c.start_y()));
+      assert_eq!(true, eq001(0.0, c.start_azimuth));
+      assert_eq!(true, eq001(0.0, c.start_azimuth()));
+      assert_eq!(true, eq001(400.0, c.radius));
+      assert_eq!(true, eq001(400.0, c.start_radius()));
+      assert_eq!(true, eq001(400.0, c.end_radius()));      
+      assert_eq!(true, eq001(300.0, c.length));
+      assert_eq!(true, eq001(300.0, c.length()));
    }
    #[test]
    fn test_end_azimuth() {
@@ -128,18 +128,18 @@ mod tests {
       let angle = PI/4.0;
       // positive radius
       let c = HCircle::new(p, angle, 400.0, 300.0);
-      assert_eq!(true, assert_eq001(1.5354, c.end_azimuth()));
+      assert_eq!(true, eq001(1.5354, c.end_azimuth()));
       // negative radius
       let c = HCircle::new(p, angle, -400.0, 300.0);
-      assert_eq!(true, assert_eq001(0.0354, c.end_azimuth()));
+      assert_eq!(true, eq001(0.0354, c.end_azimuth()));
       // End azimuth negative
       let angle = PI/8.0;
       let c = HCircle::new(p, angle, -400.0, 300.0);
-      assert_eq!(true, assert_eq001(5.9259, c.end_azimuth()));
+      assert_eq!(true, eq001(5.9259, c.end_azimuth()));
       // End azimuth greater then 2PI
       let angle = 5.9259;
       let c = HCircle::new(p, angle, 400.0, 300.0);
-      assert_eq!(true, assert_eq001(0.3927, c.end_azimuth()));
+      assert_eq!(true, eq001(0.3927, c.end_azimuth()));
    }
    #[test]
    #[should_panic]
@@ -156,21 +156,21 @@ mod tests {
       let angle = PI/2.0;
       // positive radius
       let c = HCircle::new(p, angle, 400.0, 628.3185);
-      assert_eq!(true, assert_eq001(2.3562, c.azimuth_at_s(314.1593)));
+      assert_eq!(true, eq001(2.3562, c.azimuth_at_s(314.1593)));
       // negative radius
       let angle = -PI/2.0;
       let c = HCircle::new(p, angle, -400.0, 628.3185);
-      assert_eq!(true, assert_eq001(3.9270, c.azimuth_at_s(314.1593)));
+      assert_eq!(true, eq001(3.9270, c.azimuth_at_s(314.1593)));
       // End azimuth negative
       let p = Point::new(282.8427, 282.8427);
       let angle = -PI/4.0;
       let c = HCircle::new(p, angle, -400.0, 942.4778);
-      assert_eq!(true, assert_eq001(3.9270, c.azimuth_at_s(628.3185)));
+      assert_eq!(true, eq001(3.9270, c.azimuth_at_s(628.3185)));
       // End azimuth greater then 2PI
       let p = Point::new(0.0, -400.0);
       let angle = 0.0;
       let c = HCircle::new(p, angle, 400.0, 1256.6371);
-      assert_eq!(true, assert_eq001(2.3562, c.azimuth_at_s(942.4778)));
+      assert_eq!(true, eq001(2.3562, c.azimuth_at_s(942.4778)));
    }
    #[test]
    fn test_center() {
@@ -180,14 +180,14 @@ mod tests {
       let p = Point::new(0.0, -1.0);
       let hc = HCircle::new(p, 0.0, r, 3.0);
       let center = hc.center();
-      assert_eq!(true, assert_eq001(c.x, center.x));
-      assert_eq!(true, assert_eq001(c.y, center.y));
+      assert_eq!(true, eq001(c.x, center.x));
+      assert_eq!(true, eq001(c.y, center.y));
       // negative radius
       let p = Point::new(-1.0, 0.0);
       let hc = HCircle::new(p, PI/2.0, -r, 3.0);
       let center = hc.center();
-      assert_eq!(true, assert_eq001(c.x, center.x));
-      assert_eq!(true, assert_eq001(c.y, center.y));
+      assert_eq!(true, eq001(c.x, center.x));
+      assert_eq!(true, eq001(c.y, center.y));
    }
    #[test]
    fn test_point_at_s() {
@@ -199,8 +199,8 @@ mod tests {
       let circle = HCircle::new(sp, sa, r, l);
       let p45 = Point::new(282.8427, 282.8427);
       let ps = circle.point_at_s(628.3185/2.0);
-      assert_eq!(true, assert_eq001(p45.x, ps.x));
-      assert_eq!(true, assert_eq001(p45.y, ps.y));
+      assert_eq!(true, eq001(p45.x, ps.x));
+      assert_eq!(true, eq001(p45.y, ps.y));
       // Q1, R<0
       let sp = Point::new(0.0, 400.0);
       let sa = 0.0;
@@ -209,8 +209,8 @@ mod tests {
       let circle = HCircle::new(sp, sa, r, l);
       let p45 = Point::new(282.8427, 282.8427);
       let ps = circle.point_at_s(628.3185/2.0);
-      assert_eq!(true, assert_eq001(p45.x, ps.x));
-      assert_eq!(true, assert_eq001(p45.y, ps.y));
+      assert_eq!(true, eq001(p45.x, ps.x));
+      assert_eq!(true, eq001(p45.y, ps.y));
       // Q1, R>0
       let sp = Point::new(0.0, 400.0);
       let sa = 0.0;
@@ -219,8 +219,8 @@ mod tests {
       let circle = HCircle::new(sp, sa, r, l);
       let p45 = Point::new(282.8427, 517.1573);
       let ps = circle.point_at_s(628.3185/2.0);
-      assert_eq!(true, assert_eq001(p45.x, ps.x));
-      assert_eq!(true, assert_eq001(p45.y, ps.y));
+      assert_eq!(true, eq001(p45.x, ps.x));
+      assert_eq!(true, eq001(p45.y, ps.y));
       // Q3, R<0
       let sp = Point::new(-400.0, 0.0);
       let sa = PI / 2.0;
@@ -229,8 +229,8 @@ mod tests {
       let circle = HCircle::new(sp, sa, r, l);
       let p45 = Point::new(-282.8427, 282.8427);
       let ps = circle.point_at_s(628.3185/2.0);
-      assert_eq!(true, assert_eq001(p45.x, ps.x));
-      assert_eq!(true, assert_eq001(p45.y, ps.y));
+      assert_eq!(true, eq001(p45.x, ps.x));
+      assert_eq!(true, eq001(p45.y, ps.y));
       
    }
    #[test]
@@ -242,8 +242,8 @@ mod tests {
       let l = 628.3185;
       let circle = HCircle::new(sp, sa, r, l);
       let p90 = Point::new(0.0, 400.0);
-      assert_eq!(true, assert_eq001(p90.x, circle.end_point().x));
-      assert_eq!(true, assert_eq001(p90.y, circle.end_point().y));
+      assert_eq!(true, eq001(p90.x, circle.end_point().x));
+      assert_eq!(true, eq001(p90.y, circle.end_point().y));
       // Q1, R<0
       let sp = Point::new(0.0, 400.0);
       let sa = 0.0;
@@ -253,8 +253,8 @@ mod tests {
       let p90 = Point::new(400.0, 0.0);
       let ps = circle.end_point();
       println!("{},{}", ps.x, ps.y);
-      assert_eq!(true, assert_eq001(p90.x, ps.x));
-      assert_eq!(true, assert_eq001(p90.y, ps.y));
+      assert_eq!(true, eq001(p90.x, ps.x));
+      assert_eq!(true, eq001(p90.y, ps.y));
       // Q1, R>0
       let sp = Point::new(0.0, 400.0);
       let sa = 0.0;
@@ -263,8 +263,8 @@ mod tests {
       let circle = HCircle::new(sp, sa, r, l);
       let p90 = Point::new(400.0, 800.0);
       let ps = circle.end_point();
-      assert_eq!(true, assert_eq001(p90.x, ps.x));
-      assert_eq!(true, assert_eq001(p90.y, ps.y));
+      assert_eq!(true, eq001(p90.x, ps.x));
+      assert_eq!(true, eq001(p90.y, ps.y));
       // Q3, R<0
       let sp = Point::new(-400.0, 0.0);
       let sa = PI / 2.0;
@@ -273,8 +273,8 @@ mod tests {
       let circle = HCircle::new(sp, sa, r, l);
       let p90 = Point::new(0.0, 400.0);
       let ps = circle.end_point();
-      assert_eq!(true, assert_eq001(p90.x, ps.x));
-      assert_eq!(true, assert_eq001(p90.y, ps.y));      
+      assert_eq!(true, eq001(p90.x, ps.x));
+      assert_eq!(true, eq001(p90.y, ps.y));      
    }
 
 }

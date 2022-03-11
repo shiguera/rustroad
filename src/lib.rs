@@ -11,7 +11,7 @@ mod road;
 pub fn eq(x:f64, y:f64) -> bool {
    approx_eq!(f64, x, y, ulps=2)
 }
-pub fn assert_eq001(x:f64, y:f64) -> bool {
+pub fn eq001(x:f64, y:f64) -> bool {
    // Checks if two numbers differ in less than 0.001
    if (x-y).abs() < 0.001 {
       true
@@ -88,17 +88,17 @@ mod tests {
    fn test_eq001() {
       let x = 1.0;
       let y = 1.0001;
-      assert_eq!(true, assert_eq001(x,y));
+      assert_eq!(true, eq001(x,y));
       let y = 0.9999;
-      assert_eq!(true, assert_eq001(x,y));
+      assert_eq!(true, eq001(x,y));
       let x = -1.0;
       let y = -1.0001;
-      assert_eq!(true, assert_eq001(x,y));
+      assert_eq!(true, eq001(x,y));
       let y = -0.9999;
-      assert_eq!(true, assert_eq001(x,y));
+      assert_eq!(true, eq001(x,y));
       let x = 0.000005;
       let y = -0.000005;
-      assert_eq!(true, assert_eq001(x,y));
+      assert_eq!(true, eq001(x,y));
       
    }
    #[test]
@@ -116,59 +116,59 @@ mod tests {
    #[test]
    fn test_rad2deg() {
       let x = 0.0f64;
-      assert_eq001(0.0, rad2deg(x));
+      eq001(0.0, rad2deg(x));
       let x = 1.5;
-      assert_eq001(180.0/PI*1.5, rad2deg(x));
+      eq001(180.0/PI*1.5, rad2deg(x));
    }
 
    #[test]
    fn test_deg2rad() {
       let x = 0.0f64;
-      assert_eq001(0.0, deg2rad(x));
+      eq001(0.0, deg2rad(x));
       let x = 45.0;
-      assert_eq001(PI/4.0, deg2rad(x));
+      eq001(PI/4.0, deg2rad(x));
    }
    #[test]
    fn test_normalize_radian() {
-      assert_eq001(normalize_radian(0f64), 0.0f64);   
-      assert_eq001(normalize_radian(deg2rad(45.0)), deg2rad(45.0));
-      assert_eq001(normalize_radian(deg2rad(405.50)), deg2rad(45.50));
-      assert_eq001(normalize_radian(deg2rad(765.0)), deg2rad(45.0));
-      assert_eq001(normalize_radian(deg2rad(-45.0)), deg2rad(315.0));
-      assert_eq001(normalize_radian(deg2rad(-450.0)), deg2rad(270.0));
-      assert_eq001(normalize_radian(deg2rad(-765.0)), deg2rad(315.0));               
+      eq001(normalize_radian(0f64), 0.0f64);   
+      eq001(normalize_radian(deg2rad(45.0)), deg2rad(45.0));
+      eq001(normalize_radian(deg2rad(405.50)), deg2rad(45.50));
+      eq001(normalize_radian(deg2rad(765.0)), deg2rad(45.0));
+      eq001(normalize_radian(deg2rad(-45.0)), deg2rad(315.0));
+      eq001(normalize_radian(deg2rad(-450.0)), deg2rad(270.0));
+      eq001(normalize_radian(deg2rad(-765.0)), deg2rad(315.0));               
    }
    #[test]
    fn test_normalize_360() {
-      assert_eq001(normalize_360(0f64), 0.0f64);   
-      assert_eq001(normalize_360(45.0), 45.0);
-      assert_eq001(normalize_360(405.50), 45.50);
-      assert_eq001(normalize_360(765.0), 45.0);
-      assert_eq001(normalize_360(-45.0), 315.0);
-      assert_eq001(normalize_360(-450.0), 270.0);
-      assert_eq001(normalize_360(-765.0), 315.0);               
+      eq001(normalize_360(0f64), 0.0f64);   
+      eq001(normalize_360(45.0), 45.0);
+      eq001(normalize_360(405.50), 45.50);
+      eq001(normalize_360(765.0), 45.0);
+      eq001(normalize_360(-45.0), 315.0);
+      eq001(normalize_360(-450.0), 270.0);
+      eq001(normalize_360(-765.0), 315.0);               
    }
 
    #[test] 
    fn test_gon2deg() {
       let d = 0.0;
-      assert_eq001(0.0, gon2deg(d));
+      eq001(0.0, gon2deg(d));
       let d = 100.0;
-      assert_eq001(90.0, gon2deg(d));
+      eq001(90.0, gon2deg(d));
       let d = -200.0;
-      assert_eq001(-180.0, gon2deg(d));
+      eq001(-180.0, gon2deg(d));
       let d = 400.0;
-      assert_eq001(360.0, gon2deg(d));
+      eq001(360.0, gon2deg(d));
    }
    #[test] 
    fn test_deg2gon() {
       let d = 0.0;
-      assert_eq001(0.0, deg2gon(d));
+      eq001(0.0, deg2gon(d));
       let d = 90.0;
-      assert_eq001(100.0, deg2gon(d));
+      eq001(100.0, deg2gon(d));
       let d = -135.0;
-      assert_eq001(-150.0, deg2gon(d));
+      eq001(-150.0, deg2gon(d));
       let d = 360.0;
-      assert_eq001(400.0, gon2deg(d));
+      eq001(400.0, gon2deg(d));
    }
 }

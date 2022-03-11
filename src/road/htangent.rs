@@ -4,7 +4,7 @@ use crate::geom::vector::Vector;
 use crate::geom::angles::Azimuth;
 use super::hsection::HSection;
 use std::f64::consts::PI;
-use crate::{assert_eq001, deg2rad};
+use crate::{eq001, deg2rad, normalize_360};
 
 
 pub struct HTangent {
@@ -14,19 +14,20 @@ pub struct HTangent {
 }
 impl HTangent {
    pub fn new(start_point: Point, azimuth_value: f64, length: f64) -> Self {
-      if length < 0.0_f64 || assert_eq001(length, 0.0) {
+      if length < 0.0_f64 || eq001(length, 0.0) {
          panic!("Length must be greater than zero");
       }
       HTangent{start_point, azimuth: Azimuth::new(azimuth_value), length}
    }
    /// Unit vector in the positive direction of the tangent
    pub fn vector(&self) -> Vector {
-      let angle = crate::deg2rad(self.azimuth.value) + PI/2.0;
-      Vector::new(angle.cos(), angle.sin())
+      Vector::new(self.angle().cos(), self.angle().sin())
    }
    /// The trigonometric angle measured in radians from East
+   /// angle = PI/2 - azimut_in_radians
    pub fn angle(&self) -> f64 {
-      deg2rad(self.azimuth.value)+PI/2.0
+      let ang_degrees = normalize_360(90.0 - self.azimuth.value);
+      deg2rad(ang_degrees)
    }
 }
 
@@ -59,8 +60,8 @@ impl HSection for HTangent {
       if s<0.0 || s > self.length() {
          panic!("s less than zero or grater than length");
       }
-      let x = self.start_x() + s*self.azimuth.value.cos();
-      let y = self.start_y() + s*self.azimuth.value.sin();
+      let x = self.start_x() + s*self.angle().cos();
+      let y = self.start_y() + s*self.angle().sin();
       Point::new(x, y)
    }
 }
@@ -68,7 +69,7 @@ impl HSection for HTangent {
 #[cfg(test)]
 mod tests {
    use super::*;
-   use crate::assert_eq001;
+   use crate::eq001;
 
    #[test]
    #[should_panic]
@@ -84,110 +85,110 @@ mod tests {
       let p = Point::new(-1.0, -1.0);
       let az = 30.0;
       let r1 = HTangent::new(p, az, 100.0);
-      assert_eq001(r1.start_point.x, -1.0);
-      assert_eq001(r1.start_point.y, -1.0);
-      assert_eq001(r1.azimuth.value, az);
-      assert_eq001(r1.length, 100.0);
+      eq001(r1.start_point.x, -1.0);
+      eq001(r1.start_point.y, -1.0);
+      eq001(r1.azimuth.value, az);
+      eq001(r1.length, 100.0);
       // Check that negative angle is converted to normalized positive 
       let az = -45.0;
       let r1 = HTangent::new(p, az, 100.0);
-      assert_eq001(r1.azimuth.value, 315.0);
+      eq001(r1.azimuth.value, 315.0);
    }
    #[test]
    fn test_angle() {
-      let t = HTangent::new(Point::new(0.0,0.0), 0.0, 1.0);
-      assert_eq001(0.0, t.angle());
-      let t = HTangent::new(Point::new(0.0,0.0), 30.0, 1.0);
-      assert_eq001(deg2rad(30.0), t.angle());
-      let t = HTangent::new(Point::new(0.0,0.0), 120.0, 1.0);
-      assert_eq001(deg2rad(120.0), t.angle());
-      let t = HTangent::new(Point::new(0.0,0.0), 315.0, 1.0);
-      assert_eq001(deg2rad(315.0), t.angle());
-      let t = HTangent::new(Point::new(0.0,0.0), 720.0, 1.0);
-      assert_eq001(0.0, t.angle());
+      let p: Point = Point::new(0.0,0.0);
+      let t = HTangent::new(p, 0.0, 1.0);
+      assert!(eq001(deg2rad(90.0), t.angle()));
+      let t = HTangent::new(p, 30.0, 1.0);
+      assert!(eq001(deg2rad(60.0), t.angle()));
+      let t = HTangent::new(p, 120.0, 1.0);
+      assert!(eq001(deg2rad(330.0), t.angle()));
+      let t = HTangent::new(p, 315.0, 1.0);
+      assert!(eq001(deg2rad(135.0), t.angle()));
+      let t = HTangent::new(p, 720.0, 1.0);
+      assert!(eq001(deg2rad(90.0), t.angle()));
    }
    #[test]
    fn test_vector() {
-      // Azimuth 30 => Q2 
+      // Azimuth 30 => Q1
       let p = Point::new(-1.0, -1.0);
       let az = 30.0;
       let r1 = HTangent::new(p, az, 100.0);
       let v = r1.vector();
-      assert_eq001(v.length(), 1.0);
-      assert_eq001(v.vx, r1.angle().cos());
-      assert_eq001(v.vy, r1.angle().sin());
-      // Q3
+      assert!(eq001(v.length(), 1.0));
+      assert!(eq001(v.vx, deg2rad(60.0).cos()));
+      assert!(eq001(v.vy, deg2rad(60.0).sin()));
+      // Q4
       let az = 120.0;
       let r1 = HTangent::new(p, az, 100.0);
       let v = r1.vector();
-      assert_eq001(v.length(), 1.0);
-      assert_eq001(v.vx, r1.angle().cos());
-      assert_eq001(v.vy, r1.angle().sin());
-      //Q4
+      assert!(eq001(v.length(), 1.0));
+      assert!(eq001(v.vx, deg2rad(330.0).cos()));
+      assert!(eq001(v.vy, deg2rad(330.0).sin()));
+      //Q3
       let angle = 210.0;
       let r1 = HTangent::new(p, angle, 100.0);
       let v = r1.vector();
-      assert_eq001(v.length(), 1.0);
-      assert_eq001(v.vx, r1.angle().cos());
-      assert_eq001(v.vy, r1.angle().sin());
-      // Q1
+      assert!(eq001(v.length(), 1.0));
+      assert!(eq001(v.vx, deg2rad(240.0).cos()));
+      assert!(eq001(v.vy, deg2rad(240.0).sin()));
+      // Q2
       let angle = 300.0;
       let r1 = HTangent::new(p, angle, 100.0);
       let v = r1.vector();
-      assert_eq001(v.length(), 1.0);
-      assert_eq001(v.vx, r1.angle().cos());
-      assert_eq001(v.vy, r1.angle().sin());      
+      assert!(eq001(v.length(), 1.0));
+      assert!(eq001(v.vx, deg2rad(150.0).cos()));
+      assert!(eq001(v.vy, deg2rad(150.0).sin()));      
    }
    #[test]
    fn test_end_point() {
       // azimuth zero
       let p1 = Point::new(0.0, 0.0);
-      let angle = 0.0;
+      let az = 0.0;
       let length = 100.0;
-      let r1 = HTangent::new(p1, angle, length);
-      assert_eq!(r1.end_point().x, 100.0);
-      assert_eq!(r1.end_point().y, 0.0);
+      let r1 = HTangent::new(p1, az, length);
+      assert!(eq001(r1.end_point().x, 0.0));
+      assert!(eq001(r1.end_point().y, 100.0));
       // Q1
-      let angle = 30.0*PI/180.0;
-      let r1 = HTangent::new(p1, angle, length);
-      assert_eq!(r1.end_point().x, 100.0*angle.cos());
-      assert_eq!(true, (r1.end_point().y - 50.0).abs()<0.001);
-      // Q2
-      let angle = 120.0*PI/180.0;
-      let r1 = HTangent::new(p1, angle, length);
-      assert_eq!(true, (r1.end_point().x+50.0).abs()<0.001);
-      assert_eq!(true, (r1.end_point().y - 100.0*angle.sin()).abs()<0.001);
-      // Q3
-      let angle = 210.0*PI/180.0;
-      let r1 = HTangent::new(p1, angle, length);
-      assert_eq!(true, (r1.end_point().x-100.0*angle.cos()).abs()<0.001);
-      assert_eq!(true, (r1.end_point().y + 50.0).abs()<0.001);
+      let az = 30.0;
+      let r1 = HTangent::new(p1, az, length);
+      assert!(eq001(r1.end_point().x, 100.0*deg2rad(60.0).cos()));
+      assert!(eq001(r1.end_point().y,  100.0*deg2rad(60.0).sin()));
       // Q4
-      let angle = 300.0*PI/180.0;
-      let r1 = HTangent::new(p1, angle, length);
-      assert_eq!(true, (r1.end_point().x - 50.0).abs()<0.001);
-      assert_eq!(true, (r1.end_point().y-100.0*angle.sin()).abs()<0.001);      
-      // Aziuth PI/2
-      let angle = PI/2.0;
-      let r1 = HTangent::new(p1, angle, length);
-      assert_eq!(true, (r1.end_point().x).abs()< 0.001);
-      assert_eq!(true, (r1.end_point().y - 100.0).abs()<0.001);      
-      // Azimuth PI
-      let angle = PI;
-      let r1 = HTangent::new(p1, angle, length);
-      assert_eq!(true, (r1.end_point().x+100.0).abs()<0.001);
-      assert_eq!(true, (r1.end_point().y).abs()<0.001);      
-      // Azimuth 3PI/2
-      let angle = 3.0*PI/2.0;
-      let r1 = HTangent::new(p1, angle, length);
-      assert_eq!(true, (r1.end_point().x).abs()<0.001);
-      assert_eq!(true, (r1.end_point().y+100.0).abs()<0.001);
-      // Azimuth 2PI
-      let angle = 2.0*PI;
-      let r1 = HTangent::new(p1, angle, length);
-      println!("az={}", r1.azimuth.value); // Check that 2PI changes to 0.0
-      assert_eq!(r1.end_point().x, 100.0);
-      assert_eq!(true, (r1.end_point().y).abs()<0.001);            
+      let az = 120.0;
+      let r1 = HTangent::new(p1, az, length);
+      assert!(eq001(r1.end_point().x, 100.0*deg2rad(330.0).cos()));
+      assert!(eq001(r1.end_point().y, 100.0*deg2rad(330.0).sin()));
+      // Q3
+      let az = 210.0;
+      let r1 = HTangent::new(p1, az, length);
+      assert!(eq001(r1.end_point().x, 100.0*deg2rad(240.0).cos()));
+      assert!(eq001(r1.end_point().y, 100.0*deg2rad(240.0).sin()));
+      // Q2
+      let az = 300.0;
+      let r1 = HTangent::new(p1, az, length);
+      assert!(eq001(r1.end_point().x, 100.0*deg2rad(150.0).cos()));
+      assert!(eq001(r1.end_point().y, 100.0*deg2rad(150.0).sin()));      
+      // Azimuth 90.0
+      let az = 90.0;
+      let r1 = HTangent::new(p1, az, length);
+      assert!(eq001(r1.end_point().x, 100.0));
+      assert!(eq001(r1.end_point().y, 0.0));      
+      // Azimuth 180.0
+      let az = 180.0;
+      let r1 = HTangent::new(p1, az, length);
+      assert!(eq001(r1.end_point().x, 0.0));
+      assert!(eq001(r1.end_point().y, -100.0));      
+      // Azimuth 270.0
+      let az = 270.0;
+      let r1 = HTangent::new(p1, az, length);
+      assert!(eq001(r1.end_point().x, -100.0));
+      assert!(eq001(r1.end_point().y, 0.0));
+      // Azimuth 360.0
+      let az = 360.0;
+      let r1 = HTangent::new(p1, az, length);
+      assert!(eq001(r1.end_point().x, 0.0));
+      assert!(eq001(r1.end_point().y, 100.0));            
    }
    #[test]
    fn test_point_at_s() {
@@ -195,28 +196,28 @@ mod tests {
       let v = Vector::new(1.0, 0.0);
       let r = HTangent::new(p, v.azimuth(), 10.0);
       let q = r.point_at_s(5.0);
-      assert_eq!(true, assert_eq001(5.0, q.x));
-      assert_eq!(true, assert_eq001(0.0, q.y));
+      assert_eq!(true, eq001(5.0, q.x));
+      assert_eq!(true, eq001(0.0, q.y));
       //
       let v = Vector::new(0.0, -1.0);
       let r = HTangent::new(p, v.azimuth(), 10.0);
       let q = r.point_at_s(5.0);
-      assert_eq!(true, assert_eq001(0.0, q.x));
-      assert_eq!(true, assert_eq001(-5.0, q.y));
+      assert_eq!(true, eq001(0.0, q.x));
+      assert_eq!(true, eq001(-5.0, q.y));
       //
       let v = Vector::new(-1.0, -1.0);
       println!("{}", v.azimuth());
       let r = HTangent::new(p, v.azimuth(), 10.0);
       let q = r.point_at_s(5.0);
-      assert_eq!(true, assert_eq001(-5.0*(PI/4.0).cos(), q.x));
-      assert_eq!(true, assert_eq001(-5.0*(PI/4.0).sin(), q.y));      
+      assert_eq!(true, eq001(-5.0*(PI/4.0).cos(), q.x));
+      assert_eq!(true, eq001(-5.0*(PI/4.0).sin(), q.y));      
       //
       let v = Vector::new(-1.0, 1.0);
       println!("{}", v.azimuth());
       let r = HTangent::new(p, v.azimuth(), 10.0);
       let q = r.point_at_s(5.0);
-      assert_eq!(true, assert_eq001(-5.0*(PI/4.0).cos(), q.x));
-      assert_eq!(true, assert_eq001(5.0*(PI/4.0).sin(), q.y));      
+      assert_eq!(true, eq001(-5.0*(PI/4.0).cos(), q.x));
+      assert_eq!(true, eq001(5.0*(PI/4.0).sin(), q.y));      
    }
    #[test]
    #[should_panic]

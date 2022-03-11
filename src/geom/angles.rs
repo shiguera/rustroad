@@ -20,12 +20,12 @@ impl Azimuth {
 #[cfg(test)]
 mod tests {
    use super::*;
-   use crate::assert_eq001;
+   use crate::eq001;
 
    #[test]
    fn test_azimuth_new() {
-      assert_eq001(Azimuth::new(45.0f64).value, 45.0f64);
-      assert_eq001(Azimuth::new(445.0f64).value, 85.0f64);
-      assert_eq001(Azimuth::new(-45.0f64).value, 315.0f64);
+      eq001(Azimuth::new(45.0f64).value, 45.0f64);
+      eq001(Azimuth::new(445.0f64).value, 85.0f64);
+      eq001(Azimuth::new(-45.0f64).value, 315.0f64);
    }
 }
