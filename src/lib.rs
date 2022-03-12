@@ -8,6 +8,7 @@ use std::f64::consts::PI;
 mod geom;
 mod road;
 
+/// TODO: Hay que suprimirla junto con su dependencia
 pub fn eq(x:f64, y:f64) -> bool {
    approx_eq!(f64, x, y, ulps=2)
 }
@@ -70,6 +71,20 @@ pub fn gon2deg(gon_value: f64) -> f64 {
 /// Converts from degrees to gon
 pub fn deg2gon(deg_value: f64) -> f64 {
    deg_value*90.0/100.0
+}
+
+/// Converts an azimuth value measured from the North
+/// toward the East into an angle in radians
+/// measured from the East counter-clockwise
+pub fn azimuth_to_angle(az: f64) -> f64{
+   deg2rad(normalize_360(90.0-az))
+}
+/// Converts an angle value measured in radians
+/// from the East counter-clockwise into an 
+/// azimuth in degrees measured from the North 
+/// toward the East
+pub fn angle_to_azimuth(ang: f64) -> f64{
+   rad2deg(normalize_radian(PI/2.0-ang))
 }
 
 
@@ -170,5 +185,31 @@ mod tests {
       eq001(-150.0, deg2gon(d));
       let d = 360.0;
       eq001(400.0, gon2deg(d));
+   }
+   #[test]
+   fn test_azimuth_to_angle() {
+      let az = 0.0;
+      assert!(eq001(azimuth_to_angle(az), deg2rad(90.0)));
+      let az = 30.0;
+      assert!(eq001(azimuth_to_angle(az), deg2rad(60.0)));
+      let az = 60.0;
+      assert!(eq001(azimuth_to_angle(az), deg2rad(30.0)));
+      let az = 90.0;
+      assert!(eq001(azimuth_to_angle(az), deg2rad(0.0)));
+      let az = -30.0;
+      assert!(eq001(azimuth_to_angle(az), deg2rad(120.0)));
+   }
+   #[test]
+   fn test_angle_to_azimuth() {
+      let ang = 0.0;
+      assert!(eq001(angle_to_azimuth(ang), 90.0));
+      let ang = deg2rad(30.0);
+      assert!(eq001(angle_to_azimuth(ang), 60.0));
+      let ang = deg2rad(60.0);
+      assert!(eq001(angle_to_azimuth(ang), 30.0));
+      let ang = deg2rad(90.0);
+      assert!(eq001(angle_to_azimuth(ang), 0.0));
+      let ang = deg2rad(-30.0);
+      assert!(eq001(angle_to_azimuth(ang), 120.0));
    }
 }

@@ -3,8 +3,7 @@ use crate::geom::point::Point;
 use crate::geom::vector::Vector;
 use crate::geom::angles::Azimuth;
 use super::hsection::HSection;
-use std::f64::consts::PI;
-use crate::{eq001, deg2rad, normalize_360};
+use crate::{eq001, deg2rad, normalize_360, angle_to_azimuth};
 
 
 pub struct HTangent {
@@ -70,6 +69,7 @@ impl HSection for HTangent {
 mod tests {
    use super::*;
    use crate::eq001;
+   use std::f64::consts::PI;
 
    #[test]
    #[should_panic]
@@ -188,36 +188,36 @@ mod tests {
       let az = 360.0;
       let r1 = HTangent::new(p1, az, length);
       assert!(eq001(r1.end_point().x, 0.0));
-      assert!(eq001(r1.end_point().y, 0.0));            
+      assert!(eq001(r1.end_point().y, 100.0));            
    }
    #[test]
    fn test_point_at_s() {
       let p = Point::new(0.0, 0.0);
       let v = Vector::new(1.0, 0.0);
-      let r = HTangent::new(p, v.angle(), 10.0);
-      let q = r.point_at_s(5.0);
-      assert!(eq001(5.0, q.x));
-      assert!(eq001(0.0, q.y));
+      let r = HTangent::new(p, angle_to_azimuth(v.angle()), 10.0);
+      let q = r.point_at_s(5.0);      
+      assert!(eq001(q.x, 5.0));
+      assert!(eq001(q.y, 0.0));
       //
       let v = Vector::new(0.0, -1.0);
-      let r = HTangent::new(p, v.angle(), 10.0);
+      let r = HTangent::new(p, angle_to_azimuth(v.angle()), 10.0);
       let q = r.point_at_s(5.0);
-      assert_eq!(true, eq001(0.0, q.x));
-      assert_eq!(true, eq001(-5.0, q.y));
+      assert!(eq001(0.0, q.x));
+      assert!(eq001(-5.0, q.y));
       //
       let v = Vector::new(-1.0, -1.0);
       println!("{}", v.angle());
-      let r = HTangent::new(p, v.angle(), 10.0);
+      let r = HTangent::new(p, angle_to_azimuth(v.angle()), 10.0);
       let q = r.point_at_s(5.0);
-      assert_eq!(true, eq001(-5.0*(PI/4.0).cos(), q.x));
-      assert_eq!(true, eq001(-5.0*(PI/4.0).sin(), q.y));      
+      assert!(eq001(-5.0*(PI/4.0).cos(), q.x));
+      assert!(eq001(-5.0*(PI/4.0).sin(), q.y));      
       //
       let v = Vector::new(-1.0, 1.0);
       println!("{}", v.angle());
-      let r = HTangent::new(p, v.angle(), 10.0);
+      let r = HTangent::new(p, angle_to_azimuth(v.angle()), 10.0);
       let q = r.point_at_s(5.0);
-      assert_eq!(true, eq001(-5.0*(PI/4.0).cos(), q.x));
-      assert_eq!(true, eq001(5.0*(PI/4.0).sin(), q.y));      
+      assert!(eq001(-5.0*(PI/4.0).cos(), q.x));
+      assert!(eq001(5.0*(PI/4.0).sin(), q.y));      
    }
    #[test]
    #[should_panic]
