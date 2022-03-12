@@ -194,27 +194,27 @@ mod tests {
    fn test_point_at_s() {
       let p = Point::new(0.0, 0.0);
       let v = Vector::new(1.0, 0.0);
-      let r = HTangent::new(p, v.azimuth(), 10.0);
+      let r = HTangent::new(p, v.angle(), 10.0);
       let q = r.point_at_s(5.0);
       assert!(eq001(5.0, q.x));
       assert!(eq001(0.0, q.y));
       //
       let v = Vector::new(0.0, -1.0);
-      let r = HTangent::new(p, v.azimuth(), 10.0);
+      let r = HTangent::new(p, v.angle(), 10.0);
       let q = r.point_at_s(5.0);
       assert_eq!(true, eq001(0.0, q.x));
       assert_eq!(true, eq001(-5.0, q.y));
       //
       let v = Vector::new(-1.0, -1.0);
-      println!("{}", v.azimuth());
-      let r = HTangent::new(p, v.azimuth(), 10.0);
+      println!("{}", v.angle());
+      let r = HTangent::new(p, v.angle(), 10.0);
       let q = r.point_at_s(5.0);
       assert_eq!(true, eq001(-5.0*(PI/4.0).cos(), q.x));
       assert_eq!(true, eq001(-5.0*(PI/4.0).sin(), q.y));      
       //
       let v = Vector::new(-1.0, 1.0);
-      println!("{}", v.azimuth());
-      let r = HTangent::new(p, v.azimuth(), 10.0);
+      println!("{}", v.angle());
+      let r = HTangent::new(p, v.angle(), 10.0);
       let q = r.point_at_s(5.0);
       assert_eq!(true, eq001(-5.0*(PI/4.0).cos(), q.x));
       assert_eq!(true, eq001(5.0*(PI/4.0).sin(), q.y));      
@@ -224,7 +224,7 @@ mod tests {
    fn test_point_at_s_panic_1() {
       let p = Point::new(0.0, 0.0);
       let v = Vector::new(1.0, 0.0);
-      let r = HTangent::new(p, v.azimuth(), 10.0);
+      let r = HTangent::new(p, v.angle(), 10.0);
       let _q = r.point_at_s(15.0);
    }
    #[test]
@@ -232,7 +232,7 @@ mod tests {
    fn test_point_at_s_panic_2() {
       let p = Point::new(0.0, 0.0);
       let v = Vector::new(1.0, 0.0);
-      let r = HTangent::new(p, v.azimuth(), 10.0);
+      let r = HTangent::new(p, v.angle(), 10.0);
       let _q = r.point_at_s(-5.0);
    }
 

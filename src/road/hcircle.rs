@@ -29,8 +29,8 @@ impl HCircle {
          direction = direction.right_normal_vector();
       }
       let distance = self.radius.abs();
-      let x = self.start_x() + distance * direction.azimuth().cos();
-      let y = self.start_y() + distance * direction.azimuth().sin();
+      let x = self.start_x() + distance * direction.angle().cos();
+      let y = self.start_y() + distance * direction.angle().sin();
       Point::new(x, y)
    }
 }
@@ -80,7 +80,7 @@ impl HSection for HCircle {
       } else {
          v = v.left_normal_vector();
       }
-      let direction = v.azimuth();
+      let direction = v.angle();
       let x = self.center().x + self.radius.abs()*direction.cos();
       let y = self.center().y + self.radius.abs()*direction.sin();
       Point::new(x, y)      
