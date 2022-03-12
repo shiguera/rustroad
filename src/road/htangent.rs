@@ -188,7 +188,7 @@ mod tests {
       let az = 360.0;
       let r1 = HTangent::new(p1, az, length);
       assert!(eq001(r1.end_point().x, 0.0));
-      assert!(eq001(r1.end_point().y, 100.0));            
+      assert!(eq001(r1.end_point().y, 0.0));            
    }
    #[test]
    fn test_point_at_s() {
@@ -196,8 +196,8 @@ mod tests {
       let v = Vector::new(1.0, 0.0);
       let r = HTangent::new(p, v.azimuth(), 10.0);
       let q = r.point_at_s(5.0);
-      assert_eq!(true, eq001(5.0, q.x));
-      assert_eq!(true, eq001(0.0, q.y));
+      assert!(eq001(5.0, q.x));
+      assert!(eq001(0.0, q.y));
       //
       let v = Vector::new(0.0, -1.0);
       let r = HTangent::new(p, v.azimuth(), 10.0);
