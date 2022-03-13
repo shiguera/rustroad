@@ -3,7 +3,7 @@ use crate::geom::point::Point;
 use crate::geom::vector::Vector;
 use crate::geom::angles::Azimuth;
 use super::hsection::HSection;
-use crate::{eq001, deg2rad, normalize_360, angle_to_azimuth};
+use crate::{eq001, deg2rad, normalize_360};
 
 
 pub struct HTangent {
@@ -68,7 +68,7 @@ impl HSection for HTangent {
 #[cfg(test)]
 mod tests {
    use super::*;
-   use crate::eq001;
+   use crate::{eq001, angle_to_azimuth};
    use std::f64::consts::PI;
 
    #[test]
