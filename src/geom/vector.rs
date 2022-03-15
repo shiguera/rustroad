@@ -98,8 +98,8 @@ mod tests {
    fn test_from_angle() {
       let angle = PI/8.0;
       let v = Vector::from_angle(angle);
-      assert!(eq001(0.9239, v.vx));
-      assert!(eq001(0.3827, v.vy));
+      assert!(eq001((PI/8.0).cos(), v.vx));
+      assert!(eq001((PI/8.0).sin(), v.vy));
    }
    #[test]
    fn test_length() {
@@ -113,8 +113,8 @@ mod tests {
    fn test_unit_vector() {
       let v = Vector::new(1.0,-1.0);
       assert!(eq001(v.unit_vector().length(), 1.0));
-      assert!(eq001(v.unit_vector().vx, 0.7071));
-      assert!(eq001(v.unit_vector().vy, -0.7071)); 
+      assert!(eq001(v.unit_vector().vx, (PI/4.0).cos()));
+      assert!(eq001(v.unit_vector().vy, -(PI/4.0).sin())); 
    }
    #[test]
    #[should_panic]

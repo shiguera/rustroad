@@ -8,13 +8,18 @@ use std::f64::consts::PI;
 mod geom;
 mod road;
 
+// Value used in equal comparisons with eq001
+const EPS:f64 = 1e-8;
+
 /// TODO: Hay que suprimirla junto con su dependencia
 pub fn eq(x:f64, y:f64) -> bool {
    approx_eq!(f64, x, y, ulps=2)
 }
+/// Compares two f64 and returns true if
+/// the diference is less than EPS in absolute value
 pub fn eq001(x:f64, y:f64) -> bool {
    // Checks if two numbers differ in less than 0.001
-   if (x-y).abs() < 0.001 {
+   if (x-y).abs() < EPS {
       true
    } else {
       false
@@ -102,19 +107,15 @@ mod tests {
    #[test]
    fn test_eq001() {
       let x = 1.0;
-      let y = 1.0001;
-      assert_eq!(true, eq001(x,y));
-      let y = 0.9999;
-      assert_eq!(true, eq001(x,y));
+      let y = 1.0+EPS/2.0;
+      assert!(eq001(x,y));
+      let y = 1.0-EPS/2.0;
+      assert!(eq001(x,y));
       let x = -1.0;
-      let y = -1.0001;
-      assert_eq!(true, eq001(x,y));
-      let y = -0.9999;
-      assert_eq!(true, eq001(x,y));
-      let x = 0.000005;
-      let y = -0.000005;
-      assert_eq!(true, eq001(x,y));
-      
+      let y = -1.0-EPS/2.0;
+      assert!(eq001(x,y));
+      let y = -1.0+EPS/2.0;
+      assert!(eq001(x,y));      
    }
    #[test]
    fn test_factorial() {
