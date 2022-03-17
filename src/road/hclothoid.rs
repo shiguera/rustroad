@@ -18,6 +18,9 @@ impl HClothoid {
          if eq001(0.0, start_radius) && eq001(0.0, end_radius) {
             panic!("Clothoid can't have start and end radius equal zero");
          }
+         if eq001(length, 0.0) {
+            panic!("Clothoid can't have length equals zero");
+         }
          HClothoid{start_point, start_azimuth, start_radius, end_radius, length}
       }
 }
@@ -70,12 +73,25 @@ mod tests {
 
    #[test]
    #[should_panic]
-   fn test_new_panic() {
+   /// Tests if method new() panics when it 
+   /// receives start_radius==0 && end_radius==0
+   fn test_panic_1_new() {
       let start_point = Point::new(0.0,0.0);
       let start_azimuth = 0.0;
       let start_radius = 0.0;
       let end_radius = 0.0;
       let length = 80.22;
+      let _cl = HClothoid::new(start_point, start_azimuth, start_radius, 
+         end_radius, length); 
+   }
+   #[test]
+   #[should_panic]
+   fn test_panic_2_new() {
+      let start_point = Point::new(0.0,0.0);
+      let start_azimuth = 90.0;
+      let start_radius = 0.0;
+      let end_radius = 400.0;
+      let length = 0.0;
       let _cl = HClothoid::new(start_point, start_azimuth, start_radius, 
          end_radius, length); 
    }
