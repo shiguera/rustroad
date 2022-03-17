@@ -1,14 +1,14 @@
 /// HTangent is a straight line section of a road
 use crate::geom::point::Point;
 use crate::geom::vector::Vector;
-use crate::geom::angles::Azimuth;
+//use crate::geom::angles::Azimuth;
 use super::hsection::HSection;
-use crate::{eq001, deg2rad, normalize_360};
+use crate::{eq001, normalize_360, azimuth_to_angle};
 
 
 pub struct HTangent {
    start_point: Point,
-   azimuth: Azimuth,
+   azimuth: f64,
    length: f64
 }
 impl HTangent {
@@ -16,7 +16,7 @@ impl HTangent {
       if length < 0.0_f64 || eq001(length, 0.0) {
          panic!("Length must be greater than zero");
       }
-      HTangent{start_point, azimuth: Azimuth::new(azimuth_value), length}
+      HTangent{start_point, azimuth: normalize_360(azimuth_value), length}
    }
    /// Unit vector in the positive direction of the tangent
    pub fn vector(&self) -> Vector {
@@ -25,8 +25,7 @@ impl HTangent {
    /// The trigonometric angle measured in radians from East
    /// angle = PI/2 - azimut_in_radians
    pub fn angle(&self) -> f64 {
-      let ang_degrees = normalize_360(90.0 - self.azimuth.value);
-      deg2rad(ang_degrees)
+      azimuth_to_angle(self.azimuth)
    }
 }
 
@@ -47,13 +46,13 @@ impl HSection for HTangent {
       self.length
    }
    fn start_azimuth(&self) -> f64 {
-      self.azimuth.value
+      self.azimuth
    }
    fn end_azimuth(&self) -> f64 {
-      self.azimuth.value
+      self.azimuth
    }
    fn azimuth_at_s(&self, _s:f64) -> f64 {
-      self.azimuth.value
+      self.azimuth
    }
    fn point_at_s(&self, s:f64) -> Point {
       if s<0.0 || s > self.length() {
@@ -68,7 +67,7 @@ impl HSection for HTangent {
 #[cfg(test)]
 mod tests {
    use super::*;
-   use crate::{eq001, angle_to_azimuth};
+   use crate::{eq001, deg2rad,angle_to_azimuth};
    use std::f64::consts::PI;
 
    #[test]
@@ -87,12 +86,12 @@ mod tests {
       let r1 = HTangent::new(p, az, 100.0);
       eq001(r1.start_point.x, -1.0);
       eq001(r1.start_point.y, -1.0);
-      eq001(r1.azimuth.value, az);
+      eq001(r1.azimuth, az);
       eq001(r1.length, 100.0);
       // Check that negative angle is converted to normalized positive 
       let az = -45.0;
       let r1 = HTangent::new(p, az, 100.0);
-      eq001(r1.azimuth.value, 315.0);
+      eq001(r1.azimuth, 315.0);
    }
    #[test]
    fn test_angle() {
