@@ -13,10 +13,18 @@ pub struct HClothoid {
 }
 
 impl HClothoid {
+   /// Creates a new HClothoid
+   /// One of the radius must be zero, but not both
    pub fn new(start_point: Point, start_azimuth: f64, start_radius: f64, 
       end_radius: f64, length: f64) -> Self {
-         if eq001(0.0, start_radius) && eq001(0.0, end_radius) {
-            panic!("Clothoid can't have start and end radius equal zero");
+         if eq001(0.0, start_radius) {
+            if eq001(0.0, end_radius) {
+               panic!("Clothoid can't have start and end radius equal zero");
+            } 
+         } else {
+            if !eq001(0.0, end_radius) {
+               panic!("Clothoid must have one of the radius equals zero");
+            } 
          }
          if eq001(length, 0.0) {
             panic!("Clothoid can't have length equals zero");
@@ -86,7 +94,20 @@ mod tests {
    }
    #[test]
    #[should_panic]
+   /// One of the radius must be zero
    fn test_panic_2_new() {
+      let start_point = Point::new(0.0,0.0);
+      let start_azimuth = 90.0;
+      let start_radius = -400.0;
+      let end_radius = 400.0;
+      let length = 0.0;
+      let _cl = HClothoid::new(start_point, start_azimuth, start_radius, 
+         end_radius, length); 
+   }
+   #[test]
+   #[should_panic]
+   /// Length can't be zero
+   fn test_panic_3_new() {
       let start_point = Point::new(0.0,0.0);
       let start_azimuth = 90.0;
       let start_radius = 0.0;
