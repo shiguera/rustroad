@@ -39,7 +39,7 @@ impl Point {
    /// (Nota: Traslada las coordenadas, no da las coordenadas
    /// resultantes de una traslación de los ejes)
    /// 
-   pub fn traslate_axis(&self, incx: f64, incy: f64) -> Self {
+   pub fn traslate_point(&self, incx: f64, incy: f64) -> Self {
       //   
       Point::new(self.x+incx, self.y+incy)
    }
@@ -112,7 +112,7 @@ mod tests {
    #[test]
    fn test_traslate_axis() {
       let p = Point::new(1.0, 0.0);
-      let pprim = p.traslate_axis(10.0, -10.0);
+      let pprim = p.traslate_point(10.0, -10.0);
       assert_eq!(true, eq(pprim.x, 11.0_f64));
       assert_eq!(true, eq(pprim.y,-10.0_f64));      
    }

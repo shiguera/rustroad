@@ -18,7 +18,7 @@ pub fn eq(x:f64, y:f64) -> bool {
 /// Compares two f64 and returns true if
 /// the diference is less than EPS in absolute value
 pub fn eq001(x:f64, y:f64) -> bool {
-   // Checks if two numbers differ in less than 0.001
+   // Checks if two numbers differ in less than EPS
    if (x-y).abs() < EPS {
       true
    } else {
