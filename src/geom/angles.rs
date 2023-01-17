@@ -3,7 +3,7 @@ use crate::{normalize_360, rad2deg};
 
 /// Azimuth is an angle in sexagesimal degrees,
 /// between 0 and 360, measured from the North toward the east
-/// It desn't allow negative values or values greater than 360º
+/// It doesn't allow negative values or values greater than 360º
 #[derive(Debug, Copy, Clone)]
 pub struct Azimuth {
    pub value: f64
