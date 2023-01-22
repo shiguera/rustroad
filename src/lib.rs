@@ -2,7 +2,6 @@
 // no utilizado sin emitir el warning al compilar
 #![allow(dead_code)]
 
-use float_cmp::approx_eq;
 use std::f64::consts::PI;
 
 mod geom;
@@ -11,10 +10,6 @@ mod road;
 // Value used in equal comparisons with eq001
 const EPS:f64 = 1e-8;
 
-/// TODO: Hay que suprimirla junto con su dependencia
-pub fn eq(x:f64, y:f64) -> bool {
-   approx_eq!(f64, x, y, ulps=2)
-}
 /// Compares two f64 and returns true if
 /// the diference is less than EPS in absolute value
 pub fn eq001(x:f64, y:f64) -> bool {

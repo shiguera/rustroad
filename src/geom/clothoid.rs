@@ -23,10 +23,10 @@ pub struct Clothoid {
 
 impl Clothoid {
    pub fn new(parameter: f64, end_radius: f64) -> Self {
-      if eq(end_radius, 0.0_f64) {
+      if eq001(end_radius, 0.0_f64) {
          panic!("Clothoid creation error: end_radius can't be zero");
       }
-      if eq(parameter, 0.0_f64) || parameter < 0_f64 {
+      if eq001(parameter, 0.0_f64) || parameter < 0_f64 {
          panic!("Clothoid creation error: parameter can't be zero or negative");
       }      
       Clothoid{parameter, end_radius}
