@@ -8,7 +8,8 @@ use crate::{eq001, normalize_360, azimuth_to_angle};
 
 pub struct HTangent {
    start_point: Point,
-   azimuth: f64,
+   /// azimuth= ángulo medido en grados desde el norte hacia el este 
+   azimuth: f64, 
    length: f64
 }
 impl HTangent {
