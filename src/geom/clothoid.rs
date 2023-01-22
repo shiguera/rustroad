@@ -26,8 +26,8 @@ impl Clothoid {
       if eq001(end_radius, 0.0_f64) {
          panic!("Clothoid creation error: end_radius can't be zero");
       }
-      if eq001(parameter, 0.0_f64) || parameter < 0_f64 {
-         panic!("Clothoid creation error: parameter can't be zero or negative");
+      if eq001(parameter, 0.0_f64) {
+         panic!("Clothoid creation error: parameter can't be zero");
       }      
       Clothoid{parameter, end_radius}
    }
@@ -90,16 +90,24 @@ mod tests {
    #[test]
    fn test_new() {
       let c = Clothoid::new(190.0, 450.0);
-      assert_eq!(true, eq(190.0, c.parameter));
-      assert_eq!(true, eq(450.0, c.end_radius));      
+      assert_eq!(true, eq001(190.0, c.parameter));
+      assert_eq!(true, eq001(450.0, c.end_radius));      
+      let c = Clothoid::new(-190.0, -450.0);
+      assert_eq!(true, eq001(-190.0, c.parameter));
+      assert_eq!(true, eq001(-450.0, c.end_radius));      
+      let c = Clothoid::new(-190.0, 450.0);
+      assert_eq!(true, eq001(-190.0, c.parameter));
+      assert_eq!(true, eq001(450.0, c.end_radius));      
    }
    #[test]
    #[should_panic]
+   /// Parameter can't be zero
    fn test_new_panic_1() {
       let _c = Clothoid::new(0.0, 400.0);
    }
    #[test]
    #[should_panic]
+   /// end_radius can't be zero
    fn test_new_panic_2() {
       let _c = Clothoid::new(1000.0, 0.0);
    }
@@ -130,7 +138,7 @@ mod tests {
    fn test_1() {
       let start_radius = 0.0;
       let end_radius = 100.0;
-      println!("{} {} {}", !eq(start_radius, 0.0), !eq(end_radius, 0.0), !eq(start_radius, 0.0) || !eq(end_radius, 0.0));
+      println!("{} {} {}", !eq001(start_radius, 0.0), !eq001(end_radius, 0.0), !eq001(start_radius, 0.0) || !eq001(end_radius, 0.0));
       let x = 2.0_f64;
       let y = x.powi(3);
       println!("{}",y);
@@ -143,7 +151,7 @@ mod tests {
       let len = cl.length();
       let endaz = cl.azimuth_increment();
       let alpha = cl.alpha(len);
-      assert_eq!(true, eq(endaz, alpha));
+      assert_eq!(true, eq001(endaz, alpha));
    }
    #[test]
    fn test_x() {
@@ -151,13 +159,10 @@ mod tests {
       let length = 80.22_f64;
       let end_radius = 450_f64;
       let parameter = (length*end_radius.abs()).sqrt();
-      println!("{}", parameter);
       let cl = Clothoid::new(parameter, end_radius);
       let len = cl.length();
-      println!("{}", len);
       let x = cl.x(len);
-      println!("x={}", x);
-      assert_eq!(true, x>0.0);
+      assert!(x > 0.0);
       assert_eq!(true, (x.abs()-80.156).abs()<0.001);
       
       // Case end_radius < 0 => x must be positive
@@ -176,29 +181,22 @@ mod tests {
    }
    #[test]
    fn test_y() {
-      // Case end_radius>0. y must be positive
+      // Case end_radius>0.0 y must be positive
       let length = 80.22_f64;
       let end_radius = 450_f64;
-      let parameter = (length*end_radius.abs()).sqrt();
-      println!("{}", parameter);
+      let parameter = (length*end_radius).sqrt();
       let cl = Clothoid::new(parameter, end_radius);
-      let len = cl.length();
-      println!("{}", len);
-      let y = cl.y(len);
-      println!("y={}", y);
-      assert_eq!(true, y>0.0);
-      assert_eq!(true, (y.abs()-2.382).abs()<0.001);
-      // Case end_radius<0>. y must be negative
+      let y = cl.y(cl.length());
+      assert!(y>0.0);
+      println!("{}", y);
+      assert!(eq001(y, 2.38207312368941));
+      // Case end_radius<0.0 y must be negative
       let length = 80.22_f64;
       let end_radius = -450_f64;
-      let parameter = (length*end_radius.abs()).sqrt();
-      println!("{}", parameter);
+      let parameter = -(length*end_radius.abs()).sqrt();
       let cl = Clothoid::new(parameter, end_radius);
-      let len = cl.length();
-      println!("{}", len);
-      let y = cl.y(len);
-      println!("y={}", y);
-      assert_eq!(true, y<0.0);
-      assert_eq!(true, (y.abs()-2.382).abs()<0.001);    
+      let y = cl.y(cl.length());
+      assert!(y<0.0);
+      assert!(eq001(y, -2.38207312368941));    
    }
 }

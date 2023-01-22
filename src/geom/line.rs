@@ -38,9 +38,9 @@ mod tests {
    #[test] 
    fn test_new() {
       let r1 = Line::new(1.0,1.0,1.0);
-      assert_eq!(true, approx_eq!(f64, r1.a, 1.0, ulps=2));
-      assert_eq!(true, approx_eq!(f64, r1.b, 1.0, ulps=2));
-      assert_eq!(true, approx_eq!(f64, r1.c, 1.0, ulps=2));
+      assert_eq!(true, eq001(r1.a, 1.0));
+      assert_eq!(true, eq001(r1.b, 1.0));
+      assert_eq!(true, eq001(r1.c, 1.0));
       
    }
    #[test]
@@ -48,15 +48,15 @@ mod tests {
       let p = Point::new(0.0, 0.0);
       let u = Vector::new(1.0,1.0);
       let r = Line::from_point_vector(p, u);
-      assert_eq!(true, approx_eq!(f64, r.a, 1.0, ulps=2));
-      assert_eq!(true, approx_eq!(f64, r.b, -1.0, ulps=2));
-      assert_eq!(true, approx_eq!(f64, r.c, 0.0, ulps=2));
+      assert_eq!(true, eq001(r.a, 1.0));
+      assert_eq!(true, eq001(r.b, -1.0));
+      assert_eq!(true, eq001(r.c, 0.0));
       let p = Point::new(0.0, -10.0);
       let u = Vector::new(0.0,1.0);
       let r = Line::from_point_vector(p, u);
-      assert_eq!(true, approx_eq!(f64, r.a, 1.0, ulps=2));
-      assert_eq!(true, approx_eq!(f64, r.b, 0.0, ulps=2));
-      assert_eq!(true, approx_eq!(f64, r.c, 0.0, ulps=2));
+      assert_eq!(true, eq001(r.a, 1.0));
+      assert_eq!(true, eq001(r.b, 0.0));
+      assert_eq!(true, eq001(r.c, 0.0));
       println!("{:?}", p);
       println!("{:?}", u);
       println!("{:?}", r);

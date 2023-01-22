@@ -1,3 +1,4 @@
+use crate::geom::clothoid::Clothoid;
 use crate::geom::point::Point;
 //use crate::geom::vector::Vector;
 use crate::eq001;
@@ -32,7 +33,27 @@ impl HClothoid {
          HClothoid{start_point, start_azimuth, start_radius, end_radius, length}
       }
 }
-
+impl HClothoid {
+   pub fn clothoid(&self) -> Clothoid {
+      Clothoid { parameter: self.parameter(), end_radius: self.radius_in_tangent_to_circle_point() }
+   }
+   pub fn radius_in_tangent_to_circle_point(&self) -> f64 {
+      if eq001(self.start_radius, 0.0) {
+         self.end_radius
+      } else {
+         self.start_radius
+      }
+   }
+   pub fn parameter(&self) -> f64 {
+      let r = self.radius_in_tangent_to_circle_point();
+      let a = (r.abs()* self.length).sqrt();
+      if r<0.0 {
+         a * -1.0
+      } else {
+         a
+      }
+   }
+}
 impl HSection for HClothoid {
    fn start_point(&self) -> Point {
       self.start_point
@@ -156,5 +177,43 @@ mod tests {
       let cl = HClothoid::new(start_point, start_azimuth, start_radius, 
          end_radius, length); 
       assert_eq!(true, eq001(6.194055, cl.end_azimuth()));     
+   }
+   #[test]
+   fn test_radius_in_tangent_to_circle_point() {
+      let start_point = Point::new(0.0,0.0);
+      let start_azimuth = 0.0;
+      let length = 80.22;
+      let start_radius = 0.0;
+      let end_radius = -450.0;
+      let cl = HClothoid::new(start_point, start_azimuth, start_radius, end_radius, length); 
+      assert!(eq001(cl.end_radius, cl.radius_in_tangent_to_circle_point()));
+      let end_radius = 450.0;
+      let cl = HClothoid::new(start_point, start_azimuth, start_radius, end_radius, length);
+      assert!(eq001(cl.end_radius, cl.radius_in_tangent_to_circle_point()));
+      let start_radius = 450.0;
+      let end_radius = 0.0;
+      let cl = HClothoid::new(start_point, start_azimuth, start_radius, end_radius, length); 
+      assert!(eq001(cl.start_radius, cl.radius_in_tangent_to_circle_point()));
+      let start_radius = -450.0;
+      let cl = HClothoid::new(start_point, start_azimuth, start_radius, end_radius, length); 
+      assert!(eq001(cl.start_radius, cl.radius_in_tangent_to_circle_point()));
+
+   }
+   #[test]
+   fn test_parameter() {
+      let start_point = Point::new(0.0,0.0);
+      let start_azimuth = 0.0;
+      let length = 80.22;
+      let start_radius = 0.0;
+      let end_radius = -450.0;
+      let cl = HClothoid::new(start_point, start_azimuth, start_radius, 
+         end_radius, length); 
+      let a = -(cl.length*cl.end_radius.abs()).sqrt();
+      assert!(eq001(a,  cl.parameter()));
+      let end_radius = 450.0;
+      let a = (cl.length*cl.end_radius.abs()).sqrt();
+      let cl = HClothoid::new(start_point, start_azimuth, start_radius, 
+         end_radius, length); 
+      assert!(eq001(a, cl.parameter()));
    }
 }

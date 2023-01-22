@@ -175,6 +175,6 @@ mod tests {
       // caused for the problem with ==
       let v = Vector::new(0.15*6.0+0.10, 1.0);
       println!("{} {}", v.angle(), PI/4.0);
-      assert_eq!(true, eq(v.angle(), PI/4.0));
+      assert_eq!(true, eq001(v.angle(), PI/4.0));
    }
 }

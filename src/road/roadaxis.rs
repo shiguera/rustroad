@@ -2,6 +2,7 @@
 /// Es un vector de alineaciones hsection
 /// 
 /// 
+use crate::geom::point::Point;
 use crate::road::htangent::HTangent;
 use crate::road::hclothoid::HClothoid;
 use crate::road::hcircle::HCircle;

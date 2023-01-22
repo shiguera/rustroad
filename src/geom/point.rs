@@ -73,13 +73,13 @@ mod tests {
    fn test_dist_to_line() {
       let r = Line::new(0.0, 1.0, 0.0);
       let p = Point::new(0.0, 10.0);
-      assert_eq!(true, approx_eq!(f64, p.dist_to_line(r), 10.0, ulps=2));
+      assert_eq!(true, eq001(p.dist_to_line(r), 10.0));
       let r = Line::new(1.0, 0.0, 3.0);
       let p = Point::new(0.0, 10.0);
-      assert_eq!(true, approx_eq!(f64, p.dist_to_line(r), 3.0, ulps=2));
+      assert_eq!(true, eq001(p.dist_to_line(r), 3.0));
       let r = Line::new(1.0, -1.0, 0.0);
       let p = Point::new(0.0, 0.0);
-      assert_eq!(true, approx_eq!(f64, p.dist_to_line(r), 0.0, ulps=2));
+      assert_eq!(true, eq001(p.dist_to_line(r), 0.0));
  
    }
    #[test]
@@ -87,16 +87,16 @@ mod tests {
       let p1 = Point::new(0.0, 0.0);
       let other = Point::new(10.0, 0.0);
       let mp = p1.middle_point(other);
-      assert_eq!(true, eq(mp.x, 5.0));
+      assert_eq!(true, eq001(mp.x, 5.0));
       let other = Point::new(10.0, 10.0);
       let mp = p1.middle_point(other);
-      assert_eq!(true, eq(mp.x, 5.0));
-      assert_eq!(true, eq(mp.y, 5.0));
+      assert_eq!(true, eq001(mp.x, 5.0));
+      assert_eq!(true, eq001(mp.y, 5.0));
       let p1 = Point::new(-1.0, -1.0);
       let other = Point::new(-2.0, -2.0);
       let mp = p1.middle_point(other);
-      assert_eq!(true, eq(mp.x, -1.5));
-      assert_eq!(true, eq(mp.y, -1.5));
+      assert_eq!(true, eq001(mp.x, -1.5));
+      assert_eq!(true, eq001(mp.y, -1.5));
    }
    #[test]
    fn test_rotate_axis() {
@@ -113,13 +113,13 @@ mod tests {
    fn test_traslate_axis() {
       let p = Point::new(1.0, 0.0);
       let pprim = p.traslate_point(10.0, -10.0);
-      assert_eq!(true, eq(pprim.x, 11.0_f64));
-      assert_eq!(true, eq(pprim.y,-10.0_f64));      
+      assert_eq!(true, eq001(pprim.x, 11.0_f64));
+      assert_eq!(true, eq001(pprim.y,-10.0_f64));      
    }
    #[test]
    fn test_1() {
       println!("{}", FRAC_PI_2.cos());
-      println!("{}", eq((PI/2.0).cos(), 0.0));
+      println!("{}", eq001((PI/2.0).cos(), 0.0));
       println!("{}", (PI/2.0).sin());
       let x = 90.0_f64.to_radians();
       println!("{}", x.cos());
