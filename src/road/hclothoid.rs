@@ -197,7 +197,6 @@ mod tests {
       let start_radius = -450.0;
       let cl = HClothoid::new(start_point, start_azimuth, start_radius, end_radius, length); 
       assert!(eq001(cl.start_radius, cl.radius_in_tangent_to_circle_point()));
-
    }
    #[test]
    fn test_parameter() {
@@ -215,5 +214,9 @@ mod tests {
       let cl = HClothoid::new(start_point, start_azimuth, start_radius, 
          end_radius, length); 
       assert!(eq001(a, cl.parameter()));
+   }
+   #[test]
+   fn test_clothoid() {
+      
    }
 }
