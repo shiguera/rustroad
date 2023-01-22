@@ -12,9 +12,17 @@ const EPS:f64 = 1e-8;
 
 /// Compares two f64 and returns true if
 /// the diference is less than EPS in absolute value
-pub fn eq001(x:f64, y:f64) -> bool {
-   // Checks if two numbers differ in less than EPS
+pub fn eq(x: f64, y:f64) -> bool {
    if (x-y).abs() < EPS {
+      true
+   } else {
+      false
+   }
+}
+/// Compares two f64 and returns true if
+/// the diference is less than 0.001 in absolute value
+pub fn eq001(x:f64, y:f64) -> bool {
+   if (x-y).abs() < 0.001 {
       true
    } else {
       false
@@ -93,14 +101,6 @@ mod tests {
    use super::*;
    #[test]
     fn test_eq() {
-      let x = 0.15+0.15+0.15+0.15;
-      let y = 0.20+0.20+0.20;
-      println!("x={} y={} x==y {}", x, y, x==y);
-      assert_eq!(true, eq001(0.15+0.15+0.15+0.15, 0.20+0.20+0.20));
-    }
-
-   #[test]
-   fn test_eq001() {
       let x = 1.0;
       let y = 1.0+EPS/2.0;
       assert!(eq001(x,y));
@@ -111,7 +111,21 @@ mod tests {
       assert!(eq001(x,y));
       let y = -1.0+EPS/2.0;
       assert!(eq001(x,y));      
+      assert!(eq(0.15+0.15+0.15+0.15, 0.20+0.20+0.20));
+    }
+
+   #[test]
+   fn test_eq001() {
+      assert!(eq(0.15+0.15+0.15+0.15, 0.20+0.20+0.20));     
    }
+   #[test]
+   #[should_panic]
+   fn test_eq_panic() {
+      let x = 1.0;
+      let y = 1.0001;
+      assert!(eq(x,y));
+   }
+
    #[test]
    fn test_factorial() {
       let n = 0;
