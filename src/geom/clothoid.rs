@@ -39,21 +39,17 @@ impl Clothoid {
       self.length() / self.end_radius / 2.0 * 180.0/ PI
    }
    pub fn end_azimuth(&self) -> f64 {
-      let alpha_l = self.azimuth_increment();
-      if self.end_radius > 0.0 {
-            alpha_l
-      } else {
-            2.0*PI-alpha_l.abs()
-      }    
+      90.0 + self.azimuth_increment()    
    }  
-   /// alpha is the angle with the x axis of the tanget 
-   /// to the clothoid in the generic point 
-   /// if end_radius is negative, angle is negative
+   /// alpha is the angle measured in radians between the x axis and the tanget 
+   /// to the clothoid in the generic point. 
+   /// If end_radius is negative, angle is positive
+   /// s = longitud de arco del punto
    pub fn alpha(&self, s:f64) -> f64 {
       if self.end_radius > 0_f64 {
-         s*s / 2.0 / self.parameter.powi(2)
-      } else {
          -s*s / 2.0 / self.parameter.powi(2)
+      } else {
+         s*s / 2.0 / self.parameter.powi(2)
       }
    }
    /// The x coordinate at a given arc length s
@@ -74,7 +70,7 @@ impl Clothoid {
          y = y + (-1.0_f64).powi(n) * alpha.powi(2*n+1) / (4*n+3) as f64 / factorial((2*n+1) as u64) as f64;
       }
       y=y*s;
-      if self.end_radius < 0_f64 {
+      if self.end_radius > 0_f64 {
          y = -y;
       }
       y
@@ -122,6 +118,9 @@ mod tests {
    }
    #[test]
    fn test_azimuth_increment() {
+      // En la hoja de cálculo de la M607 pone 
+      // un inremento de azimuth de 5.675 grados
+      // para estas clotoides
       let c = Clothoid::new(190.0, 450.0);
       println!("{}",c.azimuth_increment() );
       assert!(eq001(c.azimuth_increment(), 5.107));
@@ -131,29 +130,32 @@ mod tests {
 
    #[test]
    fn test_end_azimuth() {
+      // En la hoja de cálculo de la M607 pone 
+      // un inremento de azimuth de 5.675 grados
+      // para estas clotoides
       let c = Clothoid::new(190.0, 450.0);
-      assert_eq!(true, (c.end_azimuth()-0.08914).abs()<0.001);
+      assert!(eq001(c.end_azimuth(),90.0+5.107));
       let c = Clothoid::new(190.0, -450.0);
-      assert_eq!(true, (c.end_azimuth()-6.1940).abs()<0.001);
-   }
-   #[test]
-   fn test_1() {
-      let start_radius = 0.0;
-      let end_radius = 100.0;
-      println!("{} {} {}", !eq001(start_radius, 0.0), !eq001(end_radius, 0.0), !eq001(start_radius, 0.0) || !eq001(end_radius, 0.0));
-      let x = 2.0_f64;
-      let y = x.powi(3);
-      println!("{}",y);
+      assert!(eq001(c.end_azimuth(), 90.0-5.107));
    }
    #[test]
    fn test_alpha() {
+      // Positive radius
       let parameter = 500.0;
       let end_radius  = 400.0;
       let cl = Clothoid::new(parameter, end_radius);
       let len = cl.length();
-      let endaz = cl.azimuth_increment();
+      let azimuth_increment = cl.azimuth_increment();
       let alpha = cl.alpha(len);
-      assert_eq!(true, eq001(endaz, alpha));
+      assert!(eq001(azimuth_increment, -alpha*180.0/PI));
+      // Negative radius
+      let end_radius  = -400.0;
+      let cl = Clothoid::new(parameter, end_radius);
+      let len = cl.length();
+      let azimuth_increment = cl.azimuth_increment();
+      let alpha = cl.alpha(len);
+      assert!(eq001(azimuth_increment, -alpha*180.0/PI));
+
    }
    #[test]
    fn test_x() {
@@ -177,22 +179,21 @@ mod tests {
    }
    #[test]
    fn test_y() {
-      // Case end_radius>0.0 y must be positive
+      // Case end_radius>0.0 y must be negative
       let length = 80.22_f64;
       let end_radius = 450_f64;
       let parameter = (length*end_radius).sqrt();
       let cl = Clothoid::new(parameter, end_radius);
       let y = cl.y(cl.length());
-      assert!(y>0.0);
-      println!("{}", y);
-      assert!(eq001(y, 2.38207312368941));
-      // Case end_radius<0.0 y must be negative
+      assert!(y<0.0);
+      assert!(eq001(y, -2.38207312368941));
+      // Case end_radius<0.0 y must be positive
       let length = 80.22_f64;
       let end_radius = -450_f64;
       let parameter = (length*end_radius.abs()).sqrt();
       let cl = Clothoid::new(parameter, end_radius);
       let y = cl.y(cl.length());
-      assert!(y<0.0);
-      assert!(eq001(y, -2.38207312368941));    
+      assert!(y>0.0);
+      assert!(eq001(y, 2.38207312368941));    
    }
 }
