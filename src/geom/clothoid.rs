@@ -2,19 +2,16 @@ use crate::*;
 use std::f64::consts::PI;
 //use factorial::Factorial;
 
-// Número de iteraciones en el desarrollo de las integrales de Fresnel
+/// Número de iteraciones en el desarrollo de las integrales de Fresnel
 const NUMITER:i32 = 6_i32;
 
-/// Generic clothoid starting in the origin (0, 0) 
+/// Generic clothoid segment starting in the origin (0, 0) 
 /// with horizontal tangent and infinity radius at this point.
 /// It uses zero as radius value for infinity radius
-/// There are 4 possible solutions. If parameter A is positive, the solution is
-/// in the first or fourth quadrant. If parameter A is negative, the solution
-/// is in the second or thirth quadrant
+/// start_radius is always zero (infinity)
 /// If ending radius is positive, clothoid is counterclockwise (1st or 3th quadrant) 
 /// If ending radius is negative, the clothoid is clockwise (4th or 2nd quadrant)
-/// start_radius is always zero (infinity)
-/// length is obtained from L = abs(A^2/end_radius)
+/// length is obtained from L = abs(A^2/end_radius) 
 #[derive(Debug, Clone, Copy)]
 pub struct Clothoid {
    pub parameter: f64, 
@@ -37,8 +34,9 @@ impl Clothoid {
    }
    /// The azimuth_increment is positive in rightward curves
    /// and negative in leftward curves
+   /// It's measured in degrees
    pub fn azimuth_increment(&self) -> f64 {
-      self.length() / self.end_radius / 2.0
+      self.length() / self.end_radius / 2.0 * 180.0/ PI
    }
    pub fn end_azimuth(&self) -> f64 {
       let alpha_l = self.azimuth_increment();
@@ -123,11 +121,12 @@ mod tests {
       assert_eq!(true, (c.length()-80.222).abs()<0.001);
    }
    #[test]
-   fn test_alpha_l() {
+   fn test_azimuth_increment() {
       let c = Clothoid::new(190.0, 450.0);
-      assert_eq!(true, (c.azimuth_increment()-0.08914).abs()<0.001);
+      println!("{}",c.azimuth_increment() );
+      assert!(eq001(c.azimuth_increment(), 5.107));
       let c = Clothoid::new(190.0, -450.0);
-      assert_eq!(true, (c.azimuth_increment()+0.08914).abs()<0.001);
+      assert!(eq001(c.azimuth_increment(), -5.107));
    }
 
    #[test]

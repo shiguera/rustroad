@@ -59,7 +59,11 @@ impl HSection for HClothoid {
       self.start_point
    }
    fn end_point(&self) -> Point {
-      todo!();
+      let cl = self.clothoid();
+      let x = self.start_point.x + cl.x(self.length());
+      println!("length={} start_x={} end_x={}", self.length, self.start_point.x, x);
+      let y = cl.y(self.length());
+      Point { x, y}
    }
    fn start_radius(&self) -> f64 {
       self.start_radius
@@ -217,6 +221,18 @@ mod tests {
    }
    #[test]
    fn test_clothoid() {
-      
+      todo!();
+   }
+   #[test]
+   fn test_end_point() {
+      let start_point = Point::new(433067.939,	4503906.797);
+      let start_azimuth = 286.705;
+      let start_radius = 0.0;
+      let end_radius = 450.0;
+      let length = 80.222	;
+      let cl = HClothoid::new(start_point, start_azimuth, start_radius, end_radius,length);
+      let end_point = cl.end_point();
+      assert!(eq001(end_point.x, 432730.377));
+      assert!(eq001(end_point.y, 4503969.09));      
    }
 }
