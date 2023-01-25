@@ -28,6 +28,25 @@ impl Clothoid {
       }      
       Clothoid{parameter, end_radius}
    }
+   
+   /// Clotoide obtenida a partir del radio del círculo y el retranqueo
+   /// Es un procedimiento iterativo aproximado
+   // pub fn from_end_radius_and_retranqueo(end_radius: f64, setback: f64) -> Self {
+   //    let mut length: f64 = (24.0*end_radius*setback).sqrt();
+   //    let mut alpha_l: f64 = length / 2.0 / end_radius;
+   //    let mut ret: f64=0.0;
+   //    let mut contador = 0i32;
+   //    while (ret-setback).abs()>0.001 && contador<20 {
+   //       contador=contador+1;
+   //       alpha_l = length / 2.0 / end_radius;
+   //       let factor = alpha_l/12.0 - alpha_l.powi(3)/336.0 + alpha_l.powi(5)/15840.0 - alpha_l.powi(7)/1209600.0;
+   //       ret = length * factor;
+   //       length = ret / factor;
+   //    }
+   //    let parameter = (length*end_radius).sqrt();
+   //    Clothoid { parameter, end_radius}
+   // }
+   
    /// the length is always positive
    pub fn length(&self) -> f64 {
       self.parameter*self.parameter / self.end_radius.abs()
@@ -75,6 +94,14 @@ impl Clothoid {
       }
       y
    }
+   /// El retranqueo siempre es una cantidad positiva
+   pub fn retranqueo(&self) -> f64 {
+      let y = self.y(self.length()).abs();
+      y - self.end_radius.abs()*(1.0-self.alpha(self.length()).cos())
+   }
+
+   
+
 }
 
 #[cfg(test)]
@@ -109,12 +136,32 @@ mod tests {
       let _c = Clothoid::new(1000.0, 0.0);
    }
 
+   // #[test]
+   // fn test_from_end_radius_and_setback() {
+   //    let cl = Clothoid::new(150.0, 250.0);
+   //    let setback = cl.retranqueo();
+   //    let cl2 = Clothoid::from_end_radius_and_retranqueo(cl.end_radius, setback);
+   //    println!("{}", cl2.length());
+   //    assert!(eq001(cl2.length(), 90.0));
+   //    assert!(eq001(cl2.parameter, 150.0));
+   //    assert!(eq001(cl2.end_radius, 250.0));
+      
+   //    let cl = Clothoid::from_end_radius_and_retranqueo(200.0, 1.396);
+   //    println!("{}", cl.length());
+   // }
+
    #[test]
    fn test_length() {
       let c = Clothoid::new(190.0, 450.0);
       assert_eq!(true, (c.length()-80.222).abs()<0.001);
       let c = Clothoid::new(190.0, -450.0);
       assert_eq!(true, (c.length()-80.222).abs()<0.001);
+
+      let cl = Clothoid::new(150.0, 250.0);
+      assert!(eq001(cl.length(), 90.0));
+      let cl = Clothoid::new(150.0, -250.0);
+      assert!(eq001(cl.length(), 90.0));
+
    }
    #[test]
    fn test_azimuth_increment() {
@@ -156,6 +203,15 @@ mod tests {
       let alpha = cl.alpha(len);
       assert!(eq001(azimuth_increment, -alpha*180.0/PI));
 
+      let cl = Clothoid::new(150.0, 250.0);
+      assert!(eq001(cl.alpha(cl.length()), -0.18));
+      assert!(eq001(cl.alpha(45.0), -0.045));
+      
+      let cl = Clothoid::new(150.0, -250.0);
+      assert!(eq001(cl.alpha(cl.length()), 0.18));
+      assert!(eq001(cl.alpha(45.0), 0.045));
+      
+
    }
    #[test]
    fn test_x() {
@@ -176,6 +232,14 @@ mod tests {
       let x = cl.x(cl.length());
       assert!(x>0.0);
       assert!(eq001(x, 80.156));
+
+      let cl = Clothoid::new(150.0, 250.0);
+      assert!(eq001(cl.x(cl.length()), 89.709));
+      assert!(eq001(cl.x(45.0), 44.991));
+      
+      let cl = Clothoid::new(150.0, -250.0);
+      assert!(eq001(cl.x(cl.length()), 89.709));
+      assert!(eq001(cl.x(45.0), 44.991));
    }
    #[test]
    fn test_y() {
@@ -195,5 +259,12 @@ mod tests {
       let y = cl.y(cl.length());
       assert!(y>0.0);
       assert!(eq001(y, 2.38207312368941));    
+
+      let cl = Clothoid::new(150.0, 250.0);
+      assert!(eq001(cl.y(cl.length()), -5.388));
+      assert!(eq001(cl.y(45.0), -0.675));
+
+      let cl = Clothoid::new(150.0, -250.0);
+      assert!(eq001(cl.y(45.0), 0.675));
    }
 }

@@ -94,6 +94,13 @@ pub fn azimuth_to_angle(az: f64) -> f64{
 pub fn angle_to_azimuth(ang: f64) -> f64{
    rad2deg(normalize_radian(PI/2.0-ang))
 }
+/// Cambio de ejes de un punto P(x,y) a unos ejes
+/// girados theta radianes
+pub fn rotation(x:f64, y: f64, theta: f64) -> (f64, f64) {
+   let xprim = x*theta.cos() + y*theta.sin();
+   let yprim = -x*theta.sin() + y* theta.cos();
+   (xprim, yprim)
+}
 
 
 #[cfg(test)]
@@ -221,5 +228,15 @@ mod tests {
       assert!(eq001(angle_to_azimuth(ang), 0.0));
       let ang = deg2rad(-30.0);
       assert!(eq001(angle_to_azimuth(ang), 120.0));
+   }
+
+   #[test]
+   fn test_rotation() {
+      let x = 1.0;
+      let y = 1.0;
+      let theta = deg2rad(45.0);
+      let (xprim, yprim) = rotation(x, y, theta);
+      assert!(eq001(xprim, 1.4142));
+      assert!(eq001(yprim, 0.0));
    }
 }

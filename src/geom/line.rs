@@ -1,3 +1,4 @@
+
 use crate::*;
 use crate::geom::vector::Vector;
 use crate::geom::point::Point;
@@ -28,6 +29,17 @@ impl Line {
          c = p.y - a*p.x;
       }
       Line::new(a, b, c)
+   }
+   pub fn parallel_by_distance(&self, distance: f64) -> (Line, Line) {
+      let a = self.a;
+      let b = self.b;
+      let c = self.c;
+      let discriminante = 4.0*c*c - 4.0*(c*c-distance*distance*(a*a+b*b));
+      let c2_1 = (2.0*c + discriminante)/ 2.0;
+      let c2_2 = (2.0*c - discriminante)/ 2.0;
+      let r1 = Line{a, b, c:c2_1};
+      let r2 = Line{a, b, c:c2_2};
+      (r1, r2)
    }
 }
 
@@ -62,4 +74,16 @@ mod tests {
       println!("{:?}", r);
 
    }
+   #[test]
+   fn test_parallel_by_distance() {
+      let r = Line{a:0.0, b: 1.0, c:0.0};
+      let d = 3.0f64;
+      let (r1, r2) = r.parallel_by_distance(d);
+      assert!(eq001(r1.a, 0.0) && eq001(r2.a, 0.0));
+      assert!(eq001(r1.b, 1.0) && eq001(r2.b, 1.0));
+      assert!(eq001(r1.c, 3.0) || eq001(r2.c, 3.0) );
+      assert!(eq001(r1.c, -3.0) || eq001(r2.c, -3.0) );
+      
+   }
+
 }
