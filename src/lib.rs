@@ -28,6 +28,15 @@ pub fn eq001(x:f64, y:f64) -> bool {
       false
    }
 }
+/// Compares two f64 and returns true if
+/// the diference is less than 0.1 in absolute value
+pub fn eq01(x:f64, y:f64) -> bool {
+   if (x-y).abs() < 0.01 {
+      true
+   } else {
+      false
+   }
+}
 pub fn factorial(num: u64) -> u64 {
    match num {
        0 => 1,
@@ -73,12 +82,12 @@ pub fn rad2deg(valuerad: f64) -> f64 {
 }
 /// Converts from gon to degrees
 pub fn gon2deg(gon_value: f64) -> f64 {
-   gon_value*100.0/90.0
+   gon_value*0.9
 }
 
 /// Converts from degrees to gon
 pub fn deg2gon(deg_value: f64) -> f64 {
-   deg_value*90.0/100.0
+   deg_value*10.0/9.0
 }
 
 /// Converts an azimuth value measured from the North
@@ -148,60 +157,60 @@ mod tests {
    #[test]
    fn test_rad2deg() {
       let x = 0.0f64;
-      eq001(0.0, rad2deg(x));
+      assert!(eq001(0.0, rad2deg(x)));
       let x = 1.5;
-      eq001(180.0/PI*1.5, rad2deg(x));
+      assert!(eq001(180.0/PI*1.5, rad2deg(x)));
    }
 
    #[test]
    fn test_deg2rad() {
       let x = 0.0f64;
-      eq001(0.0, deg2rad(x));
+      assert!(eq001(0.0, deg2rad(x)));
       let x = 45.0;
-      eq001(PI/4.0, deg2rad(x));
+      assert!(eq001(PI/4.0, deg2rad(x)));
    }
    #[test]
    fn test_normalize_radian() {
-      eq001(normalize_radian(0f64), 0.0f64);   
-      eq001(normalize_radian(deg2rad(45.0)), deg2rad(45.0));
-      eq001(normalize_radian(deg2rad(405.50)), deg2rad(45.50));
-      eq001(normalize_radian(deg2rad(765.0)), deg2rad(45.0));
-      eq001(normalize_radian(deg2rad(-45.0)), deg2rad(315.0));
-      eq001(normalize_radian(deg2rad(-450.0)), deg2rad(270.0));
-      eq001(normalize_radian(deg2rad(-765.0)), deg2rad(315.0));               
+      assert!(eq001(normalize_radian(0f64), 0.0f64));   
+      assert!(eq001(normalize_radian(deg2rad(45.0)), deg2rad(45.0)));
+      assert!(eq001(normalize_radian(deg2rad(405.50)), deg2rad(45.50)));
+      assert!(eq001(normalize_radian(deg2rad(765.0)), deg2rad(45.0)));
+      assert!(eq001(normalize_radian(deg2rad(-45.0)), deg2rad(315.0)));
+      assert!(eq001(normalize_radian(deg2rad(-450.0)), deg2rad(270.0)));
+      assert!(eq001(normalize_radian(deg2rad(-765.0)), deg2rad(315.0)));               
    }
    #[test]
    fn test_normalize_360() {
-      eq001(normalize_360(0f64), 0.0f64);   
-      eq001(normalize_360(45.0), 45.0);
-      eq001(normalize_360(405.50), 45.50);
-      eq001(normalize_360(765.0), 45.0);
-      eq001(normalize_360(-45.0), 315.0);
-      eq001(normalize_360(-450.0), 270.0);
-      eq001(normalize_360(-765.0), 315.0);               
+      assert!(eq001(normalize_360(0f64), 0.0f64));   
+      assert!(eq001(normalize_360(45.0), 45.0));
+      assert!(eq001(normalize_360(405.50), 45.50));
+      assert!(eq001(normalize_360(765.0), 45.0));
+      assert!(eq001(normalize_360(-45.0), 315.0));
+      assert!(eq001(normalize_360(-450.0), 270.0));
+      assert!(eq001(normalize_360(-765.0), 315.0));               
    }
 
    #[test] 
    fn test_gon2deg() {
       let d = 0.0;
-      eq001(0.0, gon2deg(d));
+      assert!(eq001(0.0, gon2deg(d)));
       let d = 100.0;
-      eq001(90.0, gon2deg(d));
+      assert!(eq001(90.0, gon2deg(d)));
       let d = -200.0;
-      eq001(-180.0, gon2deg(d));
+      assert!(eq001(-180.0, gon2deg(d)));
       let d = 400.0;
-      eq001(360.0, gon2deg(d));
+      assert!(eq001(360.0, gon2deg(d)));
    }
    #[test] 
    fn test_deg2gon() {
       let d = 0.0;
-      eq001(0.0, deg2gon(d));
+      assert!(eq001(0.0, deg2gon(d)));
       let d = 90.0;
-      eq001(100.0, deg2gon(d));
+      assert!(eq001(100.0, deg2gon(d)));
       let d = -135.0;
-      eq001(-150.0, deg2gon(d));
+      assert!(eq001(-150.0, deg2gon(d)));
       let d = 360.0;
-      eq001(400.0, gon2deg(d));
+      assert!(eq001(400.0, deg2gon(d)));
    }
    #[test]
    fn test_azimuth_to_angle() {

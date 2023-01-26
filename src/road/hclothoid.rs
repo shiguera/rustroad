@@ -50,6 +50,7 @@ impl HClothoid {
       let theta = azimuth_to_angle(self.start_azimuth);
       let (xc,_y) = rotation(xc_local, 0.0, -theta);
       let xc_global = self.start_point.x + xc;
+      //println!("incx={} xc_local={} xc={} xc_global={}", incx, xc_local, xc, xc_global);
       xc_global
    }
    pub fn center_y(&self) -> f64 {
@@ -96,15 +97,13 @@ impl HSection for HClothoid {
          let xprim = self.clothoid().x(self.length);
          let yprim = self.clothoid().y(self.length);
          let theta = azimuth_to_angle(self.start_azimuth);
-         //println!("xprim={} yprim={} theta={}", xprim, yprim, rad2deg(theta));
-         let (x, y) = rotation(xprim, yprim, -theta);
-         //println!("x={} y={}", x, y);         
+         let (x, y) = rotation(xprim, yprim, normalize_radian(-theta));
          let end_x = self.start_point.x + x;
          let end_y = self.start_point.y + y;
          Point{x: end_x, y: end_y}
-
       } else {
          // Cálculo enrevesado partiendo del punto de tangencia con el círculo
+         todo!();
          Point{x:0.0, y: 0.0}
       }
    }
@@ -150,11 +149,13 @@ mod tests {
    fn sample_clothoid_direct_positive_radius() -> HClothoid {
       // start_radius = 0, end_radius= 450
       // parameter = 190,
-      // end_point.x = 432730.377
-      // end_point.y = 4503969.09
+      // end_point.x = 433067.939
+      // end_point.y = 4503906.8
       // alpha_L = -0.08913 radianes
-      let start_point = Point{x:433067.939, y: 4503906.797};
-      let start_azimuth = 281.031;
+      // center.x = 432974.648
+      // center.y = 4504347.02
+      let start_point = Point{x:433145.265, y: 4503928.05};
+      let start_azimuth = gon2deg(281.031);
       let start_radius = 0.0;
       let end_radius = 450.0;
       let length = 80.222;
@@ -163,25 +164,38 @@ mod tests {
    fn sample_clothoid_direct_negative_radius() -> HClothoid {
       // start_radius = 0, end_radius= -450
       // parameter = 190,
-      // end_point.x = 431675.544
-      // end_point.y = 4504330.311
+      // end_point.x = 431771.661
+      // end_point.y = 4504338.39
       // alpha_L = 0.08913 radianes
-      let start_point = Point{x:431771.661, y: 4504338.386};
-      let start_azimuth = 307.174;
+      let start_point = Point{x:431851.579, y: 4504331.74};
+      let start_azimuth = gon2deg(307.174);
       let start_radius = 0.0;
       let end_radius = -450.0;
       let length = 80.222;
+      HClothoid::new(start_point, start_azimuth, start_radius, end_radius, length)
+   }
+   fn sample_clothoid_direct_negative_radius_2() -> HClothoid {
+      // start_radius = 0, end_radius= -800
+      // parameter = 260,
+      // end_point.x = 432168.825
+      // end_point.y = 4504284.65
+      // alpha_L = 0.05281 radianes
+      let start_point = Point{x:432249.237, y: 4504258.72};
+      let start_azimuth = gon2deg(320.979);
+      let start_radius = 0.0;
+      let end_radius = -800.0;
+      let length = 84.5;
       HClothoid::new(start_point, start_azimuth, start_radius, end_radius, length)
    }
 
    fn sample_clothoid_inverse_positive_radius() -> HClothoid {
       // start_radius = 450, end_radius= 0
       // parameter = 190,
-      // end_point.x = 431114.709
-      // end_point.y = 4504298.492
+      // end_point.x = 432665.732
+      // end_point.y = 4504016.55
       // alpha_L = -0.08913 radianes
-      let start_point = Point{x:431192.883, y: 4504280.607};
-      let start_azimuth = 310.535;
+      let start_point = Point{x:432730.377, y: 4503969.09};
+      let start_azimuth = gon2deg(310.535);
       let start_radius = 450.0;
       let end_radius = 0.0;
       let length = 80.222;
@@ -190,11 +204,11 @@ mod tests {
    fn sample_clothoid_inverse_negative_radius() -> HClothoid {
       // start_radius = -450, end_radius= 0
       // parameter = 190,
-      // end_point.x = 430654.005
-      // end_point.y = 4504200.712
+      // end_point.x = 432328.77
+      // end_point.y = 4504231.52
       // alpha_L = -0.08913 radianes
-      let start_point = Point{x:430859.986, y: 4504269.405};
-      let start_azimuth = 285.182;
+      let start_point = Point{x:432403.845, y: 4504203.33};
+      let start_azimuth = gon2deg(285.182);
       let start_radius = -450.0;
       let end_radius = 0.0;
       let length = 80.222;
@@ -206,6 +220,12 @@ mod tests {
       assert!(eq001(44.951, hcl.center_x()));
       let hcl = HClothoid::new(Point{x:0.0, y: 0.0}, 90.0, 0.0, -250.0, 90.0);
       assert!(eq001(44.951, hcl.center_x()));
+
+      // let hcl = sample_clothoid_direct_negative_radius();
+      // assert!(eq01(432220.891, hcl.center_x()));
+      // let hcl = sample_clothoid_direct_positive_radius();
+      // assert!(eq01(432974.648, hcl.center_x()));
+
    }
    #[test]
    fn test_center_y() {
@@ -213,6 +233,10 @@ mod tests {
       assert!(eq001(-251.349, hcl.center_y()));
       let hcl = HClothoid::new(Point{x:0.0, y: 0.0}, 90.0, 0.0, -250.0, 90.0);
       assert!(eq001(251.349, hcl.center_y()));
+
+      // let hcl = sample_clothoid_direct_positive_radius();
+      // println!("{}", hcl.center_y());
+      // assert!(eq01(4504347.02, hcl.center_y()));
    }
    #[test]
    fn test_center() {
@@ -237,19 +261,22 @@ mod tests {
    }
    #[test]
    fn test_end_point() {
-      todo!();
-      // let cl = HClothoid{start_point: Point{x:433067.939, y:4503906.8}, start_azimuth: 281.031, start_radius: 0.0,
-      //    end_radius: 450.0, length: 80.222};
-      // let end_point = cl.end_point();
-      // println!("end_point.x={} end_point.y={}", end_point.x, end_point.y);
-      // println!("xc={} yc={} ret={}", cl.center().x, cl.center().y, cl.retranqueo());
+      let cl = sample_clothoid_direct_positive_radius();
+      let end_point = cl.end_point();
+      assert!(eq01(end_point.x, 433067.939));
+      assert!(eq01(end_point.y, 4503906.8)); 
+      
+      let cl = sample_clothoid_direct_negative_radius();
+      let end_point = cl.end_point();
+      assert!(eq01(end_point.x, 431771.661));
+      assert!(eq01(end_point.y, 4504338.39));             
 
-      // let cl = sample_clothoid_direct_positive_radius();
-      // let end_point = cl.end_point();
-      // println!("{} {}", end_point.x, end_point.y);
-      // println!("{} {}", end_point.x, end_point.y);
-      // assert!(eq001(end_point.x, 432730.377));
-      // assert!(eq001(end_point.y, 4503969.09));   
+      let cl = sample_clothoid_direct_negative_radius_2();
+      let end_point = cl.end_point();
+      println!("{} {}", end_point.x, end_point.y);
+      assert!(eq01(end_point.x, 432168.825));
+      assert!(eq01(end_point.y, 4504284.65));             
+
    }
    #[test]
    #[should_panic]
