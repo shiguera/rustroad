@@ -178,8 +178,6 @@ mod tests {
       let (x1, x2) = second_degree_equation(a, b, c);
       assert!(eq001(1.0, x1));
       assert!(eq001(-2.0, x2));      
-
-
    }
    #[test]
    #[should_panic]

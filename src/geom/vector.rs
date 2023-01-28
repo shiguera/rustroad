@@ -13,15 +13,18 @@ impl Vector {
    pub fn new(vx: f64, vy: f64) -> Self {
       Vector{vx,vy}
    }
+   
    /// Build an unity Vector from an angle.
    /// Angle is measured in radians from east leftward
    pub fn from_angle(angle: f64) -> Self {
       Vector::new(angle.cos(), angle.sin())
    }
+   
    /// Calculates the length of the Vector
    pub fn length(&self) -> f64 {
       ((self.vx*self.vx)+(self.vy*self.vy)).sqrt()
    }
+   
    /// It returns a new Vector with same direction and length 1
    pub fn unit_vector(&self) -> Self {
       let length = self.length();
@@ -30,21 +33,19 @@ impl Vector {
       }
       Vector::new(self.vx/length, self.vy/length)
    }
-   ///
+   
    /// Perpendicular vector toward the left side (counterclock-wise)
    pub fn left_normal_vector(&self) -> Self {
       Vector::new(-self.vy, self.vx)
    }
-   ///
+
    /// Perpendicular vector toward the right side (clock-wise)
+   /// Angle in radians with X axis 
    pub fn right_normal_vector(&self) -> Self {
       Vector::new(self.vy, -self.vx)
    }
+
    /// Angle in radians with X axis 
-   /// East==Positive X axis is the origin of angles
-   /// Counterclockwise is the direction 
-   ///
-   /// TODO: Make comparisons with abs(minvalue), not with ==
    pub fn angle(&self) -> f64 {
       let result:f64;
       if eq001(self.vx, 0.0) && eq001(self.vy, 0.0) {
@@ -82,12 +83,136 @@ impl Vector {
       }
       result
    }
+
+   /// Vector unitario que forma un ángulo menor de pi/2 en radianes hacia la derecha
+   pub fn right_angle_vector(&self, angle: f64) -> Self {
+      let angle = normalize_radian(angle);
+      if angle > PI / 2.0 {
+         panic!("Angle greater than PI/2");
+      }
+      let right_normal = self.right_normal_vector();
+      Vector::new(self.vx + right_normal.vx, self.vy + right_normal.vy).unit_vector()
+   }
+      /// Vector unitario que forma un ángulo menor de pi/2 en radianes hacia la izquierda
+      pub fn left_angle_vector(&self, angle: f64) -> Self {
+         let angle = normalize_radian(angle);
+         if angle > PI / 2.0 {
+            panic!("Angle greater than PI/2");
+         }
+         let left_normal = self.left_normal_vector();
+         Vector::new(self.vx + left_normal.vx, self.vy + left_normal.vy).unit_vector()
+      }
 }
 
 #[cfg(test)]
 mod tests {
    use super::*;
    
+   #[test]
+   fn test_right_angle_vector() {
+      let v = Vector::new(1.0, 0.0);
+      let angle = PI/4.0;
+      let w = v.right_angle_vector(angle);
+      assert!(eq001(w.angle(), deg2rad(315.0)));
+      assert!(eq001(w.length(), 1.0));
+
+      let v = Vector::new(1.0, 1.0);
+      let angle = PI/4.0;
+      let w = v.right_angle_vector(angle);
+      assert!(eq001(w.angle(), 0.0));
+      assert!(eq001(w.length(), 1.0));
+
+      let v = Vector::new(1.0, -1.0);
+      let angle = PI/4.0;
+      let w = v.right_angle_vector(angle);
+      assert!(eq001(w.angle(), deg2rad(270.0)));
+      assert!(eq001(w.length(), 1.0));
+
+      let v = Vector::new(0.0, 1.0);
+      let angle = PI/4.0;
+      let w = v.right_angle_vector(angle);
+      assert!(eq001(w.angle(), deg2rad(45.0)));
+      assert!(eq001(w.length(), 1.0));
+
+      let v = Vector::new(-1.0, 1.0);
+      let angle = PI/4.0;
+      let w = v.right_angle_vector(angle);
+      assert!(eq001(w.angle(), PI/2.0));
+      assert!(eq001(w.length(), 1.0));
+
+      let v = Vector::new(-1.0, 0.0);
+      let angle = PI/4.0;
+      let w = v.right_angle_vector(angle);
+      assert!(eq001(w.angle(), deg2rad(135.0)));
+      assert!(eq001(w.length(), 1.0));
+
+      let v = Vector::new(-1.0, -1.0);
+      let angle = PI/4.0;
+      let w = v.right_angle_vector(angle);
+      assert!(eq001(w.angle(), PI));
+      assert!(eq001(w.length(), 1.0));
+
+   }
+
+   #[test]
+   fn test_left_angle_vector() {
+      let v = Vector::new(1.0, 0.0);
+      let angle = PI/4.0;
+      let w = v.left_angle_vector(angle);
+      assert!(eq001(w.angle(), deg2rad(45.0)));
+      assert!(eq001(w.length(), 1.0));
+
+      let v = Vector::new(1.0, 1.0);
+      let angle = PI/4.0;
+      let w = v.left_angle_vector(angle);
+      assert!(eq001(w.angle(), PI/2.0));
+      assert!(eq001(w.length(), 1.0));
+
+      let v = Vector::new(1.0, -1.0);
+      let angle = PI/4.0;
+      let w = v.left_angle_vector(angle);
+      assert!(eq001(w.angle(), 0.0));
+      assert!(eq001(w.length(), 1.0));
+
+      let v = Vector::new(0.0, 1.0);
+      let angle = PI/4.0;
+      let w = v.left_angle_vector(angle);
+      assert!(eq001(w.angle(), deg2rad(135.0)));
+      assert!(eq001(w.length(), 1.0));
+
+      let v = Vector::new(-1.0, 1.0);
+      let angle = PI/4.0;
+      let w = v.left_angle_vector(angle);
+      assert!(eq001(w.angle(), PI));
+      assert!(eq001(w.length(), 1.0));
+
+      let v = Vector::new(-1.0, 0.0);
+      let angle = PI/4.0;
+      let w = v.left_angle_vector(angle);
+      assert!(eq001(w.angle(), deg2rad(225.0)));
+      assert!(eq001(w.length(), 1.0));
+
+      let v = Vector::new(-1.0, -1.0);
+      let angle = PI/4.0;
+      let w = v.left_angle_vector(angle);
+      assert!(eq001(w.angle(), 3.0*PI/2.0));
+      assert!(eq001(w.length(), 1.0));
+
+   }
+
+   #[test]
+   #[should_panic]
+   fn test_right_angle_vector_panic_1() {
+      let v = Vector::new(0.0, 0.0);
+      let angle = 2.0*PI;
+      let _w = v.right_angle_vector(angle);
+      
+      let v = Vector::new(-1.0, -1.0);
+      let angle = PI/4.0;
+      let _w = v.right_angle_vector(angle);
+   }
+
+
    #[test]
    fn test_new() {
       let v = Vector::new(1.0,-1.0);
