@@ -44,6 +44,20 @@ pub fn factorial(num: u64) -> u64 {
        _ => factorial(num - 1) * num,
    }
 }
+/// Devuelve las soluciones de una ecuación de segundo grado ax2 + bx + c = 0
+pub fn second_degree_equation(a: f64, b: f64, c: f64) -> (f64, f64) {
+   if eq001(a, 0.0) && eq001(b, 0.0) && eq001(c, 0.0) {
+      panic!("Coeficientes nulos!");
+   }
+   let disc = b*b - 4.0*a * c;
+   if disc < 0.0 {
+      panic!("Discriminante negativo!");
+   }
+   let disc = disc.sqrt();
+   let x1 = (-b + disc)/2.0/a;
+   let x2 = (-b - disc)/2.0/a;
+   (x1, x2)
+}
 /// If the angle's absolute value is greater than 2*PI, 
 /// it is changed by its equivalent between 0 and 2*PI. 
 /// If the angle is negative, it is changed by its 
@@ -152,6 +166,34 @@ mod tests {
       assert_eq!(true, factorial(n)==120);
       let x = factorial(5) as f64;
       println!("{}", x*2.0);
+   }
+   #[test]
+   fn test_second_degree_equation() {
+      let (a, b, c) = (1.0f64, 0.0f64, -1.0f64);
+      let (x1, x2) = second_degree_equation(a, b, c);
+      assert!(eq001(1.0, x1));
+      assert!(eq001(-1.0, x2));      
+
+      let (a, b, c) = (1.0f64, 1.0f64, -2.0f64);
+      let (x1, x2) = second_degree_equation(a, b, c);
+      assert!(eq001(1.0, x1));
+      assert!(eq001(-2.0, x2));      
+
+
+   }
+   #[test]
+   #[should_panic]
+   fn test_second_degree_equation_panic_1() {
+      let (a, b, c) = (0.0f64, 0.0f64, 0.0f64);
+      let (x1, x2) = second_degree_equation(a, b, c);
+      assert!(eq001(0.0, x1));
+   }
+   #[test]
+   #[should_panic]
+   fn test_second_degree_equation_panic_2() {
+      let (a, b, c) = (10.0f64, 4.0f64, 1.0f64);
+      let (x1, x2) = second_degree_equation(a, b, c);
+      assert!(eq001(0.0, x1));
    }
 
    #[test]
