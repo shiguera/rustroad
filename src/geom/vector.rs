@@ -1,6 +1,8 @@
 use std::f64::consts::PI;
 use crate::*;
 
+use super::point::Point;
+
 // 2 D vector
 #[derive(Clone, Copy, Debug)]
 pub struct Vector {
@@ -20,6 +22,9 @@ impl Vector {
       Vector::new(angle.cos(), angle.sin())
    }
    
+   pub fn from_two_points(p1: Point, p2: Point) -> Self {
+      Vector::new(p2.x-p1.x, p2 .y-p1.y)
+   }
    /// Calculates the length of the Vector
    pub fn length(&self) -> f64 {
       ((self.vx*self.vx)+(self.vy*self.vy)).sqrt()
@@ -84,30 +89,27 @@ impl Vector {
       result
    }
 
-   /// Vector unitario que forma un ángulo menor de pi/2 en radianes hacia la derecha
+   /// Vector unitario que forma un ángulo en radianes hacia la derecha
    pub fn right_angle_vector(&self, angle: f64) -> Self {
       let angle = normalize_radian(angle);
-      if angle > PI / 2.0 {
-         panic!("Angle greater than PI/2");
-      }
-      let right_normal = self.right_normal_vector();
-      Vector::new(self.vx + right_normal.vx, self.vy + right_normal.vy).unit_vector()
+      let (vx, vy) = rotation(self.vx, self.vy, angle);
+      Vector::new(vx, vy).unit_vector()
    }
-      /// Vector unitario que forma un ángulo menor de pi/2 en radianes hacia la izquierda
-      pub fn left_angle_vector(&self, angle: f64) -> Self {
-         let angle = normalize_radian(angle);
-         if angle > PI / 2.0 {
-            panic!("Angle greater than PI/2");
-         }
-         let left_normal = self.left_normal_vector();
-         Vector::new(self.vx + left_normal.vx, self.vy + left_normal.vy).unit_vector()
-      }
+   /// Vector unitario que forma un ángulo  en radianes hacia la izquierda
+   pub fn left_angle_vector(&self, angle: f64) -> Self {
+      let angle = normalize_radian(angle);
+      let (vx, vy) = rotation(self.vx, self.vy, -angle);
+      Vector::new(vx, vy).unit_vector()
+   }
 }
 
 #[cfg(test)]
 mod tests {
    use super::*;
-   
+   #[test]
+   fn test_from_two_points() {
+      todo!();
+   }   
    #[test]
    fn test_right_angle_vector() {
       let v = Vector::new(1.0, 0.0);
@@ -152,6 +154,29 @@ mod tests {
       assert!(eq001(w.angle(), PI));
       assert!(eq001(w.length(), 1.0));
 
+      let v = Vector::from_angle(deg2rad(30.0));
+      let angle = deg2rad(15.0);
+      let w = v.right_angle_vector(angle);
+      assert!(eq001(w.vx, deg2rad(15.0).cos()));
+      assert!(eq001(w.vy, deg2rad(15.0).sin()));
+
+      let v = Vector::from_angle(deg2rad(135.0));
+      let angle = deg2rad(15.0);
+      let w = v.right_angle_vector(angle);
+      assert!(eq001(w.vx, -deg2rad(30.0).sin()));
+      assert!(eq001(w.vy, deg2rad(30.0).cos()));
+
+      let v = Vector::from_angle(deg2rad(225.0));
+      let angle = deg2rad(15.0);
+      let w = v.right_angle_vector(angle);
+      assert!(eq001(w.vx, -deg2rad(30.0).cos()));
+      assert!(eq001(w.vy, -deg2rad(30.0).sin()));
+
+      let v = Vector::from_angle(deg2rad(315.0));
+      let angle = deg2rad(15.0);
+      let w = v.right_angle_vector(angle);
+      assert!(eq001(w.vx, deg2rad(300.0).cos()));
+      assert!(eq001(w.vy, deg2rad(300.0).sin()));
    }
 
    #[test]
@@ -198,20 +223,31 @@ mod tests {
       assert!(eq001(w.angle(), 3.0*PI/2.0));
       assert!(eq001(w.length(), 1.0));
 
-   }
+      let v = Vector::from_angle(deg2rad(30.0));
+      let angle = deg2rad(15.0);
+      let w = v.left_angle_vector(angle);
+      assert!(eq001(w.vx, deg2rad(45.0).cos()));
+      assert!(eq001(w.vy, deg2rad(45.0).sin()));
 
-   #[test]
-   #[should_panic]
-   fn test_right_angle_vector_panic_1() {
-      let v = Vector::new(0.0, 0.0);
-      let angle = 2.0*PI;
-      let _w = v.right_angle_vector(angle);
-      
-      let v = Vector::new(-1.0, -1.0);
-      let angle = PI/4.0;
-      let _w = v.right_angle_vector(angle);
-   }
+      let v = Vector::from_angle(deg2rad(120.0));
+      let angle = deg2rad(15.0);
+      let w = v.left_angle_vector(angle);
+      assert!(eq001(w.vx, -deg2rad(45.0).sin()));
+      assert!(eq001(w.vy, deg2rad(45.0).cos()));
 
+      let v = Vector::from_angle(deg2rad(210.0));
+      let angle = deg2rad(15.0);
+      let w = v.left_angle_vector(angle);
+      assert!(eq001(w.vx, -deg2rad(45.0).cos()));
+      assert!(eq001(w.vy, -deg2rad(45.0).sin()));
+
+      let v = Vector::from_angle(deg2rad(330.0));
+      let angle = deg2rad(15.0);
+      let w = v.left_angle_vector(angle);
+      assert!(eq001(w.vx, deg2rad(15.0).cos()));
+      assert!(eq001(w.vy, -deg2rad(15.0).sin()));
+
+   }
 
    #[test]
    fn test_new() {

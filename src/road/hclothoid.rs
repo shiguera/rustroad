@@ -1,7 +1,9 @@
 use crate::geom::clothoid::Clothoid;
+use crate::geom::line::Line;
 use crate::geom::point::Point;
 //use crate::geom::vector::Vector;
 use crate::*;
+use crate::geom::vector::Vector;
 use super::hsection::HSection;
 use std::f64::consts::PI;
 
@@ -35,7 +37,14 @@ impl HClothoid {
 }
 impl HClothoid {
    pub fn clothoid(&self) -> Clothoid {
-      Clothoid { parameter: self.parameter(), end_radius: self.radius_in_tangent_to_circle_point() }
+      if eq(self.start_radius, 0.0) {
+         Clothoid { parameter: self.parameter(), end_radius: self.end_radius}
+      } else {
+         // Si el origen local de la clotoide está al final de la alineación,
+         // en ejes locales la clotoide tiene el radio con signo contrario
+         Clothoid { parameter: self.parameter(), end_radius: self.start_radius*-1.0}
+      }
+
    }
    pub fn radius_in_tangent_to_circle_point(&self) -> f64 {
       if eq001(self.start_radius, 0.0) {
@@ -102,11 +111,24 @@ impl HSection for HClothoid {
          let end_y = self.start_point.y + y;
          Point{x: end_x, y: end_y}
       } else {
-         // Cálculo enrevesado partiendo del punto de tangencia con el círculo
-         todo!();
-         Point{x:0.0, y: 0.0}
+         let x_local = self.clothoid().x(self.length);
+         let y_local = self.clothoid().y(self.length);
+         let theta = azimuth_to_angle(self.start_azimuth);
+         let az_vector = Vector::new(theta.cos(), theta.sin());
+         let alpha_l = self.length / 2.0 / self.start_radius;
+         // ux_vector y uy_vector van en el sentido negativo
+         // de los ejes locales
+         let ux_vector = az_vector.right_angle_vector(alpha_l);
+         let uy_vector = ux_vector.left_angle_vector(PI/2.0);
+         let qx = self.start_point.x + y_local*uy_vector.vx;
+         let qy = self.start_point.y + y_local*uy_vector.vy;
+         let _q_point = Point::new(qx, qy);
+         let olx = qx + x_local * ux_vector.vx;
+         let oly = qy + x_local * ux_vector.vy;
+         Point{x: olx, y: oly}
+         }
+         
       }
-   }
    fn start_radius(&self) -> f64 {
       self.start_radius
    }
@@ -193,9 +215,9 @@ mod tests {
       // parameter = 190,
       // end_point.x = 432665.732
       // end_point.y = 4504016.55
-      // alpha_L = -0.08913 radianes
+      // alpha_L = 0.08913 radianes
       let start_point = Point{x:432730.377, y: 4503969.09};
-      let start_azimuth = gon2deg(310.535);
+      let start_azimuth = gon2deg(336.529);
       let start_radius = 450.0;
       let end_radius = 0.0;
       let length = 80.222;
@@ -208,7 +230,7 @@ mod tests {
       // end_point.y = 4504231.52
       // alpha_L = -0.08913 radianes
       let start_point = Point{x:432403.845, y: 4504203.33};
-      let start_azimuth = gon2deg(285.182);
+      let start_azimuth = gon2deg(326.653);
       let start_radius = -450.0;
       let end_radius = 0.0;
       let length = 80.222;
@@ -275,10 +297,18 @@ mod tests {
 
       let cl = sample_clothoid_direct_negative_radius_2();
       let end_point = cl.end_point();
-      println!("{} {}", end_point.x, end_point.y);
       assert!(eq01(end_point.x, 432168.825));
-      assert!(eq01(end_point.y, 4504284.65));             
+      assert!(eq01(end_point.y, 4504284.65));     
+      
+      let cl = sample_clothoid_inverse_positive_radius();
+      let end_point = cl.end_point();
+      assert!(eq01(end_point.x, 432665.732));
+      assert!(eq01(end_point.y, 4504016.55));     
 
+      let cl = sample_clothoid_inverse_negative_radius();
+      let end_point = cl.end_point();
+      assert!(eq01(end_point.x, 432328.77));
+      assert!(eq01(end_point.y, 4504231.52));     
    }
    #[test]
    #[should_panic]
@@ -406,7 +436,16 @@ mod tests {
    }
    #[test]
    fn test_clothoid() {
-      todo!();
+      let cl = sample_clothoid_direct_positive_radius().clothoid();
+      assert!(cl.end_radius > 0.0);
+      let cl = sample_clothoid_direct_negative_radius().clothoid();
+      assert!(cl.end_radius < 0.0);
+      let cl = sample_clothoid_inverse_positive_radius().clothoid();
+      assert!(cl.end_radius < 0.0);
+      let cl = sample_clothoid_inverse_negative_radius().clothoid();
+      assert!(cl.end_radius > 0.0);
+      
+      
    }
    #[test]
    fn test_alpha_l() {
