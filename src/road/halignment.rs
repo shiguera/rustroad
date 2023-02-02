@@ -28,7 +28,9 @@ impl HAlignment {
     pub fn add_hclothoid(&mut self, clothoid: HClothoid) {
         self.add(Box::new(clothoid));
     }
-    
+    pub fn len(&self) -> usize {
+        self.sections.len()
+    }
 
 }
 
@@ -37,10 +39,19 @@ mod tests {
 
     #[test]
     fn test_new() {
+        let axis = HAlignment::new();
+        assert!(axis.len()==0);
+    }
+    #[test]
+    fn test_len() {
+        let mut axis = HAlignment::new();
         let p1 = Point::new(1.0,1.0);
         let r1 = HTangent::new(p1, 45.0, 100.0);
-        let mut axis = HAlignment::new();
+        let end_point = r1.end_point();
         axis.add(Box::new(r1));
-
+        assert!(axis.len()==1);
+        let r2 = HTangent::new(end_point, 45.0, 100.0);
+        axis.add(Box::new(r2));
+        assert!(axis.len()==2);       
     }
 }
