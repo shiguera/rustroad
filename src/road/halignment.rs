@@ -8,13 +8,13 @@ use crate::road::hclothoid::HClothoid;
 use crate::road::hcircle::HCircle;
 use crate::road::hsection::HSection;
 
-pub struct RoadAxis {
+pub struct HAlignment {
     pub sections: Vec<Box<dyn HSection>>
 }
 
-impl RoadAxis {
+impl HAlignment {
     pub fn new() -> Self {
-        RoadAxis{sections: Vec::<Box<dyn HSection>>::new()}
+        HAlignment{sections: Vec::<Box<dyn HSection>>::new()}
     }
     pub fn add(&mut self, box_section: Box<dyn HSection>) {
         self.sections.push(box_section);
@@ -28,6 +28,7 @@ impl RoadAxis {
     pub fn add_hclothoid(&mut self, clothoid: HClothoid) {
         self.add(Box::new(clothoid));
     }
+    
 
 }
 
@@ -38,7 +39,8 @@ mod tests {
     fn test_new() {
         let p1 = Point::new(1.0,1.0);
         let r1 = HTangent::new(p1, 45.0, 100.0);
-        let mut axis = RoadAxis::new();
+        let mut axis = HAlignment::new();
         axis.add(Box::new(r1));
+
     }
 }

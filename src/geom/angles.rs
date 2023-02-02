@@ -21,7 +21,6 @@ impl Azimuth {
    }
 }
 
-
 #[cfg(test)]
 mod tests {
    use super::*;
@@ -45,8 +44,5 @@ mod tests {
       assert!(eq001(Azimuth::from_angle(ang).value, 0.0));
       let ang = -PI/2.0;
       assert!(eq001(Azimuth::from_angle(ang).value, 180.0));
-      
-      
-      
    }
 }
