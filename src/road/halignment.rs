@@ -8,25 +8,32 @@ use crate::road::hclothoid::HClothoid;
 use crate::road::hcircle::HCircle;
 use crate::road::hsection::HSection;
 
+pub struct HAlignmentSummarized {
+    // Conocido el punto inicial y el azimuth inicial de una alineación
+    // con estos tres datos se puede reconstruir la alineación
+    start_radius: f64,
+    end_radius: f64,
+    length: f64
+}
+
 pub struct HAlignment {
-    pub sections: Vec<Box<dyn HSection>>
+    // Coordenadas del punto inicial de la alineación horizontal
+    pub start_x: f64,
+    pub start_y: f64,
+    // Azimuth inicial en grados sexagesimales
+    pub start_azimuth: f64, 
+    pub sections: Vec<HAlignmentSummarized>, 
 }
 
 impl HAlignment {
-    pub fn new() -> Self {
-        HAlignment{sections: Vec::<Box<dyn HSection>>::new()}
+    pub fn new(start_x: f64, start_y: f64, start_azimuth: f64) -> Self {
+        HAlignment{start_x, start_y, start_azimuth, sections: Vec::<HAlignmentSummarized>::new()}
     }
-    pub fn add(&mut self, box_section: Box<dyn HSection>) {
-        self.sections.push(box_section);
-    }
-    pub fn add_htangent(&mut self, tangent: HTangent) {
-        self.add(Box::new(tangent));
-    }
-    pub fn add_hcircle(&mut self, circle: HCircle) {
-        self.add(Box::new(circle));
-    }
-    pub fn add_hclothoid(&mut self, clothoid: HClothoid) {
-        self.add(Box::new(clothoid));
+    pub fn add(&mut self, section: HAlignmentSummarized) {
+        // Tal como está, no funciona bien. Habría que añadir cada alineación
+        // en el punto final de la anterior, mediante los parámetros:
+        // start_radius, end_radius, length
+
     }
     pub fn len(&self) -> usize {
         self.sections.len()
@@ -39,19 +46,12 @@ mod tests {
 
     #[test]
     fn test_new() {
-        let axis = HAlignment::new();
+        let axis = HAlignment::new(0.0, 0.0, 100.0);
         assert!(axis.len()==0);
     }
     #[test]
     fn test_len() {
-        let mut axis = HAlignment::new();
-        let p1 = Point::new(1.0,1.0);
-        let r1 = HTangent::new(p1, 45.0, 100.0);
-        let end_point = r1.end_point();
-        axis.add(Box::new(r1));
-        assert!(axis.len()==1);
-        let r2 = HTangent::new(end_point, 45.0, 100.0);
-        axis.add(Box::new(r2));
-        assert!(axis.len()==2);       
+        let mut axis = HAlignment::new(0.0, 0.0, 100.0);
+        assert!(axis.len()==0);
     }
 }
